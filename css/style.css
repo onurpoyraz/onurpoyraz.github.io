@@ -424,16 +424,6 @@ main {
 .contact-links a { color: var(--text-muted); }
 .contact-links a:hover { color: var(--accent); }
 
-.footer {
-  max-width: var(--max-width);
-  margin: 0 auto;
-  padding: 3rem 1.5rem 2rem;
-  color: var(--text-subtle);
-  font-size: 0.85rem;
-  text-align: center;
-  border-top: 1px solid var(--border);
-}
-
 /* ============================================================
    REVEAL ANIMATIONS
    ============================================================ */
@@ -460,9 +450,56 @@ main {
   .toc { display: none; }
   .menu-btn { display: inline-flex; }
 }
-@media (max-width: 640px) {
-  main { padding: 0 1rem; }
+
+/* Tablet */
+@media (max-width: 768px) {
+  body { font-size: 15px; }
+  main { padding: 0 1.25rem; }
   .section { padding: 4rem 0 2rem; }
-  .hero { min-height: 80vh; }
-  .hero-photo { width: 100px; height: 100px; }
+  .section-title { font-size: 1.4rem; margin-bottom: 1.5rem; }
+  .topbar { top: 0.75rem; right: 0.75rem; }
+  .hero { min-height: 85vh; padding: 2rem 0; }
+  .hero-tagline { font-size: 1.05rem; }
+  .projects-grid { grid-template-columns: 1fr; }
+}
+
+/* Mobile */
+@media (max-width: 560px) {
+  body { font-size: 15px; line-height: 1.6; }
+  main { padding: 0 1rem; }
+  .section { padding: 3rem 0 1.5rem; scroll-margin-top: 4rem; }
+  .hero { min-height: 75vh; padding: 3.5rem 0 1rem; }
+  .hero-photo { width: 90px; height: 90px; margin-bottom: 1rem; }
+  .hero-name { font-size: 2rem; }
+  .hero-tagline { font-size: 1rem; margin-bottom: 1.5rem; }
+  .hero-links { gap: 0.6rem 1rem; }
+  .hero-links a { font-size: 0.9rem; padding: 0.35rem 0; }
+
+  /* Tighter timeline on narrow screens */
+  .timeline { padding-left: 1.25rem; }
+  .timeline-item::before { left: -1.375rem; }
+  .timeline-meta { gap: 0.5rem; font-size: 0.78rem; }
+  .timeline-role { font-size: 1rem; }
+  .timeline-org { font-size: 0.9rem; }
+  .timeline-bullets li { font-size: 0.9rem; }
+
+  /* Publications: stack links, keep tap targets comfortable */
+  .pub-title { font-size: 0.98rem; }
+  .pub-links { gap: 0.4rem; }
+  .pub-link { padding: 0.3rem 0.6rem; font-size: 0.78rem; }
+
+  .project-card { padding: 1rem; }
+  .contact-email { font-size: 1rem; word-break: break-all; }
+
+  /* Allow the BibTeX block to wrap instead of forcing horizontal scroll
+     to the whole viewport. */
+  .pub-bibtex { white-space: pre-wrap; word-break: break-word; font-size: 0.72rem; }
+}
+
+/* Tap targets: slightly larger controls on touch devices */
+@media (hover: none) and (pointer: coarse) {
+  .theme-toggle, .menu-btn { width: 44px; height: 44px; }
+  .pub-link { min-height: 32px; display: inline-flex; align-items: center; }
+  .publication:hover { transform: none; }
+  .project-card:hover { transform: none; box-shadow: none; }
 }

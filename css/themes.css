@@ -36,12 +36,12 @@
   --accent-hover: #a5b4fc;
   --accent-soft: rgba(129, 140, 248, 0.15);
 
-  --bg: #0f1115;
-  --bg-elevated: #171922;
-  --border: #262833;
+  --bg: #1e2128;
+  --bg-elevated: #272a33;
+  --border: #3a3e4a;
   --text: #e8e8ea;
-  --text-muted: #a0a0a8;
-  --text-subtle: #6a6a72;
+  --text-muted: #b0b0b8;
+  --text-subtle: #7a7a85;
 }
 
 /* Respect OS preference on first visit (overridden by localStorage via JS). */
@@ -51,11 +51,11 @@
     --accent-hover: #a5b4fc;
     --accent-soft: rgba(129, 140, 248, 0.15);
 
-    --bg: #0f1115;
-    --bg-elevated: #171922;
-    --border: #262833;
+    --bg: #1e2128;
+    --bg-elevated: #272a33;
+    --border: #3a3e4a;
     --text: #e8e8ea;
-    --text-muted: #a0a0a8;
-    --text-subtle: #6a6a72;
+    --text-muted: #b0b0b8;
+    --text-subtle: #7a7a85;
   }
 }
