@@ -4,14 +4,18 @@ Personal webpage — plain HTML, CSS, and JavaScript. No build step, no framewor
 
 ## Quick start
 
-Preview locally by opening `index.html` in a browser, or run a small static server from the repo root:
+This repo uses [uv](https://docs.astral.sh/uv/) to pin the Python version used by the local dev server. Python itself has no runtime dependencies — only the standard-library HTTP server — but the pinned toolchain keeps the workflow reproducible.
 
 ```bash
-python3 -m http.server 8000
+# One-time: create the virtualenv and resolve (will install the pinned Python if missing)
+uv sync
+
+# Run the dev server
+uv run python -m http.server 8000
 # then visit http://localhost:8000
 ```
 
-A server (rather than `file://`) is needed so the BibTeX file can be loaded by `fetch()`.
+A server (rather than opening `index.html` directly via `file://`) is needed so the BibTeX file can be loaded by `fetch()`.
 
 ## Deployment (GitHub Pages)
 
@@ -38,6 +42,8 @@ Every push to `main` redeploys automatically.
 │   ├── photo.jpg           # Profile photo shown in the hero
 │   ├── publications.bib    # Source of truth for the Publications section
 │   └── favicon.svg         # Browser tab icon
+├── pyproject.toml          # Pins Python version for the dev server (uv)
+├── uv.lock                 # uv lockfile — commit this for reproducibility
 └── README.md               # You are here
 ```
 
