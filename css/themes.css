@@ -1,0 +1,61 @@
+/* ============================================================
+   THEME VARIABLES
+   Light and dark palettes. Edit these to change the site colors.
+   ============================================================ */
+
+:root {
+  /* Accent — blue-purple (indigo). Same hue in both modes,
+     brightness adjusted per theme. */
+  --accent: #6366f1;
+  --accent-hover: #4f46e5;
+  --accent-soft: rgba(99, 102, 241, 0.12);
+
+  /* Light mode (default) */
+  --bg: #ffffff;
+  --bg-elevated: #fafafa;
+  --border: #e5e5e5;
+  --text: #1a1a1a;
+  --text-muted: #5a5a5a;
+  --text-subtle: #8a8a8a;
+
+  /* Shared */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  --radius: 8px;
+  --radius-lg: 12px;
+  --transition: 200ms ease;
+  --transition-slow: 400ms ease;
+
+  --max-width: 900px;
+  --toc-width: 200px;
+}
+
+[data-theme='dark'] {
+  --accent: #818cf8;
+  --accent-hover: #a5b4fc;
+  --accent-soft: rgba(129, 140, 248, 0.15);
+
+  --bg: #0f1115;
+  --bg-elevated: #171922;
+  --border: #262833;
+  --text: #e8e8ea;
+  --text-muted: #a0a0a8;
+  --text-subtle: #6a6a72;
+}
+
+/* Respect OS preference on first visit (overridden by localStorage via JS). */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --accent: #818cf8;
+    --accent-hover: #a5b4fc;
+    --accent-soft: rgba(129, 140, 248, 0.15);
+
+    --bg: #0f1115;
+    --bg-elevated: #171922;
+    --border: #262833;
+    --text: #e8e8ea;
+    --text-muted: #a0a0a8;
+    --text-subtle: #6a6a72;
+  }
+}

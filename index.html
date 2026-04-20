@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Onur Poyraz — Machine Learning & AI Researcher</title>
+  <meta name="description" content="Personal webpage of Onur Poyraz — PhD Researcher in Machine Learning and AI. Bayesian methods, healthcare time series, probabilistic modeling." />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Onur Poyraz" />
+  <meta property="og:description" content="Machine Learning & AI Researcher — Bayesian methods, healthcare, time series." />
+  <meta property="og:type" content="website" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/themes.css" />
+  <link rel="stylesheet" href="css/style.css" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+
+  <!-- Prevent theme flash: apply saved theme before paint. -->
+  <script>
+    (function () {
+      const saved = localStorage.getItem('theme');
+      if (saved) document.documentElement.setAttribute('data-theme', saved);
+    })();
+  </script>
+</head>
+<body>
+
+  <!-- Sticky sidebar TOC (desktop) -->
+  <aside class="toc" aria-label="Page navigation">
+    <nav>
+      <ul>
+        <li><a href="#hero" class="toc-link active">Home</a></li>
+        <li><a href="#about" class="toc-link">About</a></li>
+        <li><a href="#experience" class="toc-link">Experience</a></li>
+        <li><a href="#education" class="toc-link">Education</a></li>
+        <li><a href="#publications" class="toc-link">Publications</a></li>
+        <li><a href="#projects" class="toc-link">Projects</a></li>
+        <li><a href="#contact" class="toc-link">Contact</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- Top bar (mobile nav + theme toggle on all sizes) -->
+  <header class="topbar">
+    <button class="menu-btn" id="menu-btn" aria-label="Open navigation" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
+      <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+      <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+  </header>
+
+  <!-- Mobile nav overlay -->
+  <nav class="mobile-nav" id="mobile-nav" aria-hidden="true">
+    <ul>
+      <li><a href="#hero">Home</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#education">Education</a></li>
+      <li><a href="#publications">Publications</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <main>
+
+    <!-- ========== HERO ========== -->
+    <section id="hero" class="hero">
+      <div class="hero-content reveal">
+        <img src="assets/photo.jpg" alt="Onur Poyraz" class="hero-photo" />
+        <h1 class="hero-name">Onur Poyraz</h1>
+        <p class="hero-tagline">Machine Learning &amp; AI Researcher — Bayesian methods, healthcare, time series.</p>
+        <div class="hero-links">
+          <a href="https://github.com/onurpoyraz" target="_blank" rel="noopener" aria-label="GitHub">GitHub</a>
+          <a href="https://www.linkedin.com/in/onur-poyraz" target="_blank" rel="noopener" aria-label="LinkedIn">LinkedIn</a>
+          <a href="https://scholar.google.com/citations?user=onur-poyraz" target="_blank" rel="noopener" aria-label="Google Scholar">Scholar</a>
+          <a href="mailto:onur.poyraz@aalto.fi" aria-label="Email">Email</a>
+          <a href="assets/cv.pdf" class="btn-accent" download>Download CV</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== ABOUT ========== -->
+    <section id="about" class="section">
+      <h2 class="section-title reveal">About</h2>
+      <div class="section-body reveal">
+        <p>
+          I am a Machine Learning and AI researcher based in Espoo, Finland. I recently completed my PhD at Aalto University, where my work focused on flexible Bayesian latent-variable models for interacting processes in healthcare time series.
+        </p>
+        <p>
+          My interests sit at the intersection of probabilistic modeling and applied problems: coupled hidden Markov models for bacterial colonization dynamics, hierarchical Gaussian processes for glucose and insulin response, sparse Kalman filtering for nonlinear systems, and most recently Ising-machine formulations for problems in wireless communications.
+        </p>
+        <p>
+          I enjoy building models that stay interpretable under uncertainty, and working on problems where the data is messy, coupled, and scientifically interesting.
+        </p>
+      </div>
+    </section>
+
+    <!-- ========== EXPERIENCE ========== -->
+    <section id="experience" class="section">
+      <h2 class="section-title reveal">Experience</h2>
+      <ol class="timeline">
+
+        <li class="timeline-item reveal">
+          <div class="timeline-meta">
+            <span class="timeline-date">Jul 2024 – Dec 2024</span>
+            <span class="timeline-loc">Espoo, Finland</span>
+          </div>
+          <h3 class="timeline-role">Lead Researcher for Aalto Team</h3>
+          <p class="timeline-org">Aalto University &amp; Nokia</p>
+          <ul class="timeline-bullets">
+            <li>Analysis of quantum annealing and Ising machines on memristor-based hardware.</li>
+            <li>Developed a model for an analog-digital Ising machine.</li>
+            <li>Applied the model to multi-user MIMO, with applications to 6G research goals.</li>
+          </ul>
+        </li>
+
+        <li class="timeline-item reveal">
+          <div class="timeline-meta">
+            <span class="timeline-date">Aug 2019 – Dec 2024</span>
+            <span class="timeline-loc">Espoo, Finland</span>
+          </div>
+          <h3 class="timeline-role">PhD Researcher</h3>
+          <p class="timeline-org">Aalto University — Machine Learning for Health Group</p>
+          <ul class="timeline-bullets">
+            <li>Coupled hidden Markov models for bacterial colonization dynamics and treatment effects.</li>
+            <li>Mixture of CHMMs to capture heterogeneity in patient treatment responses.</li>
+            <li>Multi-output hierarchical Gaussian processes for glucose and insulin response modeling.</li>
+            <li>Sparse Kalman filtering for physical systems with nonlinear dynamics.</li>
+          </ul>
+        </li>
+
+        <li class="timeline-item reveal">
+          <div class="timeline-meta">
+            <span class="timeline-date">Jun 2018 – Jun 2019</span>
+            <span class="timeline-loc">İstanbul, Turkey</span>
+          </div>
+          <h3 class="timeline-role">M.Sc. Researcher</h3>
+          <p class="timeline-org">Boğaziçi University &amp; BKM — Interbank Card Center</p>
+          <ul class="timeline-bullets">
+            <li>Applied machine learning over large-scale transaction data.</li>
+            <li>Built an interpretable fraud detection algorithm.</li>
+            <li>Developed a merchant risk scoring tool.</li>
+          </ul>
+        </li>
+
+        <li class="timeline-item reveal">
+          <div class="timeline-meta">
+            <span class="timeline-date">Jun 2018 – Dec 2018</span>
+            <span class="timeline-loc">İstanbul, Turkey</span>
+          </div>
+          <h3 class="timeline-role">Data Scientist</h3>
+          <p class="timeline-org">Digital Helix — DeepC</p>
+          <ul class="timeline-bullets">
+            <li>Supervised and unsupervised brain lesion detection on MRI scans.</li>
+            <li>Medical image segmentation, classification, and feature regression with deep models.</li>
+          </ul>
+        </li>
+
+        <li class="timeline-item reveal">
+          <div class="timeline-meta">
+            <span class="timeline-date">Feb 2017 – Apr 2018</span>
+            <span class="timeline-loc">İstanbul, Türkiye</span>
+          </div>
+          <h3 class="timeline-role">M.Sc. Researcher</h3>
+          <p class="timeline-org">Boğaziçi University &amp; Borusan R&amp;D</p>
+          <ul class="timeline-bullets">
+            <li>Unsupervised anomaly detection on wind turbines.</li>
+            <li>Bayesian and deep-learning models for time-series anomaly detection.</li>
+          </ul>
+        </li>
+
+      </ol>
+    </section>
+
+    <!-- ========== EDUCATION ========== -->
+    <section id="education" class="section">
+      <h2 class="section-title reveal">Education</h2>
+      <ol class="timeline">
+
+        <li class="timeline-item reveal">
+          <div class="timeline-meta">
+            <span class="timeline-date">Aug 2019 – Dec 2024</span>
+          </div>
+          <h3 class="timeline-role">Ph.D. in Computer Science</h3>
+          <p class="timeline-org">Aalto University</p>
+          <p class="timeline-desc">Thesis: <em>Flexible Bayesian latent variable modeling of interacting processes in time-series healthcare</em>.</p>
+        </li>
+
+        <li class="timeline-item reveal">
+          <div class="timeline-meta">
+            <span class="timeline-date">Jan 2017 – Jun 2019</span>
+          </div>
+          <h3 class="timeline-role">M.Sc. in Computational Science and Engineering</h3>
+          <p class="timeline-org">Boğaziçi University</p>
+          <p class="timeline-desc">Thesis: <em>Anomaly Detection in Time Series</em>.</p>
+        </li>
+
+        <li class="timeline-item reveal">
+          <div class="timeline-meta">
+            <span class="timeline-date">Sep 2010 – Jun 2016</span>
+          </div>
+          <h3 class="timeline-role">B.Sc. in Electrical and Electronics Engineering</h3>
+          <p class="timeline-org">Boğaziçi University</p>
+        </li>
+
+      </ol>
+    </section>
+
+    <!-- ========== PUBLICATIONS ========== -->
+    <section id="publications" class="section">
+      <h2 class="section-title reveal">Publications</h2>
+      <div class="pub-filters reveal">
+        <button class="pub-filter active" data-filter="all">All</button>
+        <button class="pub-filter" data-filter="article">Journal</button>
+        <button class="pub-filter" data-filter="inproceedings">Conference</button>
+      </div>
+      <div id="publications-list" class="publications reveal"></div>
+    </section>
+
+    <!-- ========== PROJECTS ========== -->
+    <section id="projects" class="section">
+      <h2 class="section-title reveal">Projects</h2>
+      <div class="projects-grid">
+
+        <article class="project-card reveal">
+          <h3>Coupled HMMs for MRSA decolonization</h3>
+          <p>Modeled bacterial colonization as interacting Markov processes across body sites, quantifying site-specific clearance and treatment effects.</p>
+          <div class="project-tags"><span>Bayesian</span><span>HMM</span><span>Healthcare</span></div>
+        </article>
+
+        <article class="project-card reveal">
+          <h3>Mixture of Coupled HMMs</h3>
+          <p>A robust extension to capture heterogeneous treatment responses across patients in multivariate healthcare time series.</p>
+          <div class="project-tags"><span>Mixture models</span><span>Time series</span></div>
+        </article>
+
+        <article class="project-card reveal">
+          <h3>Glucose &amp; insulin response modeling</h3>
+          <p>Multi-output hierarchical Gaussian processes for individual assessment of postprandial glucose and insulin after bariatric surgery.</p>
+          <div class="project-tags"><span>Gaussian Processes</span><span>Healthcare</span></div>
+        </article>
+
+        <article class="project-card reveal">
+          <h3>Sparse Kalman filtering</h3>
+          <p>Sparse filtering for physical systems with nonlinear dynamics, handling partially observed states.</p>
+          <div class="project-tags"><span>State-space</span><span>Nonlinear dynamics</span></div>
+        </article>
+
+        <article class="project-card reveal">
+          <h3>Analog-digital Ising machine</h3>
+          <p>A model for analog-digital Ising machines, applied to multi-user MIMO detection with implications for 6G research.</p>
+          <div class="project-tags"><span>Optimization</span><span>Wireless</span></div>
+        </article>
+
+        <article class="project-card reveal">
+          <h3>Interpretable fraud detection</h3>
+          <p>Machine learning over large-scale transaction data to build interpretable fraud scores for merchants.</p>
+          <div class="project-tags"><span>Applied ML</span><span>Big data</span></div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- ========== CONTACT ========== -->
+    <section id="contact" class="section">
+      <h2 class="section-title reveal">Contact</h2>
+      <div class="contact-body reveal">
+        <p>The best way to reach me is by email.</p>
+        <p class="contact-email"><a href="mailto:onur.poyraz@aalto.fi">onur.poyraz@aalto.fi</a></p>
+        <div class="contact-links">
+          <a href="https://github.com/onurpoyraz" target="_blank" rel="noopener">GitHub</a>
+          <a href="https://www.linkedin.com/in/onur-poyraz" target="_blank" rel="noopener">LinkedIn</a>
+          <a href="https://scholar.google.com/citations?user=onur-poyraz" target="_blank" rel="noopener">Google Scholar</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p>© <span id="year"></span> Onur Poyraz. Built with HTML, CSS, and a little JavaScript.</p>
+  </footer>
+
+  <script src="js/publications.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
