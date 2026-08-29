@@ -236,6 +236,21 @@ main {
   color: #fff !important;
   border-bottom: none !important;
 }
+.btn-outline {
+  color: var(--accent) !important;
+  padding: 0.55rem 1rem !important;
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  border-bottom: 1px solid var(--accent) !important;
+  font-weight: 500;
+  transition: background var(--transition), color var(--transition);
+}
+.btn-outline:hover {
+  background: var(--accent-soft);
+  color: var(--accent-hover) !important;
+  border-color: var(--accent-hover);
+  border-bottom-color: var(--accent-hover) !important;
+}
 
 /* ============================================================
    TIMELINE (experience + education)
@@ -282,6 +297,46 @@ main {
   margin-bottom: 0.25rem;
 }
 .timeline-bullets li::before {
+  content: '▸';
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+}
+
+/* ============================================================
+   SKILLS
+   ============================================================ */
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.75rem 2rem;
+}
+.skill-group h3,
+.skill-notes h3 {
+  font-size: 0.75rem;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-subtle);
+  margin-bottom: 0.7rem;
+}
+.skill-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.skill-tags span {
+  font-size: 0.78rem;
+  padding: 0.25rem 0.6rem;
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-radius: 4px;
+}
+.skill-notes { margin-top: 2.5rem; }
+.skill-notes li {
+  position: relative;
+  padding-left: 1rem;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin-bottom: 0.35rem;
+}
+.skill-notes li::before {
   content: '▸';
   position: absolute;
   left: 0;
@@ -461,6 +516,7 @@ main {
   .hero { min-height: 85vh; padding: 2rem 0; }
   .hero-tagline { font-size: 1.05rem; }
   .projects-grid { grid-template-columns: 1fr; }
+  .skills-grid { grid-template-columns: 1fr; gap: 1.5rem; }
 }
 
 /* Mobile */

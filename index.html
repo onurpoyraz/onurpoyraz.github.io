@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Onur Poyraz — Machine Learning & AI Researcher</title>
-  <meta name="description" content="Personal webpage of Onur Poyraz — PhD Researcher in Machine Learning and AI. Bayesian methods, healthcare time series, probabilistic modeling." />
+  <title>Onur Poyraz — Senior Data Scientist, Probabilistic Machine Learning</title>
+  <meta name="description" content="Personal webpage of Onur Poyraz, PhD — Senior Data Scientist working on probabilistic machine learning, causal inference, and forecasting for longitudinal healthcare data." />
 
   <!-- Open Graph -->
   <meta property="og:title" content="Onur Poyraz" />
-  <meta property="og:description" content="Machine Learning & AI Researcher — Bayesian methods, healthcare, time series." />
+  <meta property="og:description" content="Senior Data Scientist, PhD — probabilistic modeling, causal inference, and time-series forecasting for healthcare." />
   <meta property="og:type" content="website" />
 
   <!-- Fonts -->
@@ -41,6 +41,7 @@
         <li><a href="#about" class="toc-link">About</a></li>
         <li><a href="#experience" class="toc-link">Experience</a></li>
         <li><a href="#education" class="toc-link">Education</a></li>
+        <li><a href="#skills" class="toc-link">Skills</a></li>
         <li><a href="#publications" class="toc-link">Publications</a></li>
         <li><a href="#projects" class="toc-link">Projects</a></li>
         <li><a href="#contact" class="toc-link">Contact</a></li>
@@ -66,6 +67,7 @@
       <li><a href="#about">About</a></li>
       <li><a href="#experience">Experience</a></li>
       <li><a href="#education">Education</a></li>
+      <li><a href="#skills">Skills</a></li>
       <li><a href="#publications">Publications</a></li>
       <li><a href="#projects">Projects</a></li>
       <li><a href="#contact">Contact</a></li>
@@ -79,13 +81,14 @@
       <div class="hero-content reveal">
         <img src="assets/photo.jpg" alt="Onur Poyraz" class="hero-photo" />
         <h1 class="hero-name">Onur Poyraz</h1>
-        <p class="hero-tagline">Machine Learning &amp; AI Researcher — Bayesian methods, healthcare, time series.</p>
+        <p class="hero-tagline">Senior Data Scientist, PhD — probabilistic machine learning, causal inference, and time-series forecasting for longitudinal healthcare data.</p>
         <div class="hero-links">
           <a href="https://github.com/onurpoyraz" target="_blank" rel="noopener" aria-label="GitHub">GitHub</a>
           <a href="https://www.linkedin.com/in/onur-poyraz" target="_blank" rel="noopener" aria-label="LinkedIn">LinkedIn</a>
-          <a href="https://scholar.google.com/citations?user=onur-poyraz" target="_blank" rel="noopener" aria-label="Google Scholar">Scholar</a>
+          <a href="https://scholar.google.com/citations?user=Unuu7tgAAAAJ&amp;hl=en" target="_blank" rel="noopener" aria-label="Google Scholar">Scholar</a>
           <a href="mailto:onur.poyraz@icloud.com" aria-label="Email">Email</a>
-          <a href="assets/cv.pdf" class="btn-accent" download>Download CV</a>
+          <a href="assets/industry.pdf" class="btn-accent" download>Industry CV</a>
+          <a href="assets/academic.pdf" class="btn-outline" download>Academic CV</a>
         </div>
       </div>
     </section>
@@ -95,13 +98,13 @@
       <h2 class="section-title reveal">About</h2>
       <div class="section-body reveal">
         <p>
-          I build AI and machine learning systems, with a particular focus on time-series data. I hold a PhD from Aalto University and currently work as a Senior Data Scientist in Finland.
+          I am a senior data scientist and PhD building production forecasting and causal-ML systems for longitudinal healthcare data. I hold a PhD in Computer Science from Aalto University and work at Vaalia Health in Espoo, Finland.
         </p>
         <p>
-          My work spans the full path from research to production: designing models, training them, and turning them into systems people can actually rely on. I am most at home with probabilistic methods and deep learning applied to temporal data — modeling dynamics, reasoning under uncertainty, and making predictions that are honest about what they know.
+          My work combines probabilistic modeling with end-to-end ownership: cohort construction and data pipelines, model training and calibration, causal and counterfactual analysis, and the governance that keeps a model trustworthy once it is deployed. I am most at home with temporal data — modeling dynamics, reasoning under uncertainty, and making predictions that are honest about what they know.
         </p>
         <p>
-          I care about models that stay interpretable, hold up on messy real-world data, and earn their place in whatever they are deployed into.
+          Alongside the applied work I continue to develop methods — Bayesian latent-variable models, state-space methods, and causal inference — and I care about models that stay interpretable, hold up on messy real-world data, and earn their place in whatever they are deployed into.
         </p>
       </div>
     </section>
@@ -113,15 +116,16 @@
 
         <li class="timeline-item reveal">
           <div class="timeline-meta">
-            <span class="timeline-date">Apr 2025 – Present</span>
-            <span class="timeline-loc">Finland</span>
+            <span class="timeline-date">Mar 2025 – Present</span>
+            <span class="timeline-loc">Espoo, Finland</span>
           </div>
           <h3 class="timeline-role">Senior Data Scientist</h3>
           <p class="timeline-org">Vaalia Health</p>
           <ul class="timeline-bullets">
-            <li>Building Causal AI methods for medication management in oncology and specialty care.</li>
-            <li>Modeling treatment access, initiation, and adherence from real-world patient data.</li>
-            <li>Developing risk models that surface drivers of early therapy disruption to guide patient support.</li>
+            <li>Designed and productionized Hydra-configured forecasting pipelines on Databricks with PySpark and PyTorch Lightning, spanning cohort construction, patient-level stratified splits, cross-validation, feature engineering, and model training.</li>
+            <li>Developed Transformer-based multi-target time-series models alongside regularized Spark ML baselines, with custom robust losses, output transformations, and calibration evaluation.</li>
+            <li>Designed causal-inference and counterfactual-simulation workflows for intervention-effect estimation, combining autoregressive baselines, subgroup analysis, and documented DAG assumptions.</li>
+            <li>Built reusable serverless Spark utilities and production-grade ML governance with MLflow lineage and provenance, automated reporting, pytest, and GitHub Actions.</li>
           </ul>
         </li>
 
@@ -130,12 +134,12 @@
             <span class="timeline-date">Jul 2024 – Dec 2024</span>
             <span class="timeline-loc">Espoo, Finland</span>
           </div>
-          <h3 class="timeline-role">Lead Researcher for Aalto Team</h3>
+          <h3 class="timeline-role">Lead Researcher, Aalto–Nokia Collaboration</h3>
           <p class="timeline-org">Aalto University &amp; Nokia</p>
           <ul class="timeline-bullets">
-            <li>Analysis of quantum annealing and Ising machines on memristor-based hardware.</li>
-            <li>Developed a model for an analog-digital Ising machine.</li>
-            <li>Applied the model to multi-user MIMO, with applications to 6G research goals.</li>
+            <li>Led Aalto's research workstream on hardware-aware combinatorial optimization for emerging 6G systems.</li>
+            <li>Analyzed quantum annealing and Ising machines on memristor-based hardware.</li>
+            <li>Developed an analog–digital Ising machine model for multi-user MIMO detection, translating memristor constraints into algorithm design.</li>
           </ul>
         </li>
 
@@ -144,13 +148,13 @@
             <span class="timeline-date">Aug 2019 – Dec 2024</span>
             <span class="timeline-loc">Espoo, Finland</span>
           </div>
-          <h3 class="timeline-role">PhD Researcher</h3>
+          <h3 class="timeline-role">Ph.D. Researcher</h3>
           <p class="timeline-org">Aalto University — Machine Learning for Health Group</p>
           <ul class="timeline-bullets">
-            <li>Coupled hidden Markov models for bacterial colonization dynamics and treatment effects.</li>
-            <li>Mixture of CHMMs to capture heterogeneity in patient treatment responses.</li>
-            <li>Multi-output hierarchical Gaussian processes for glucose and insulin response modeling.</li>
-            <li>Sparse Kalman filtering for physical systems with nonlinear dynamics.</li>
+            <li>Developed coupled hidden Markov models to infer latent interactions in multivariate longitudinal health data and analyze individualized treatment response.</li>
+            <li>Introduced mixture-of-CHMM models that discover heterogeneous response subgroups directly from data.</li>
+            <li>Modeled glucose–insulin dynamics with multi-output hierarchical Gaussian processes, producing uncertainty-aware personalized forecasts.</li>
+            <li>Developed sparse Kalman filtering methods that scale nonlinear state estimation to high-dimensional physical systems.</li>
           </ul>
         </li>
 
@@ -159,12 +163,11 @@
             <span class="timeline-date">Jun 2018 – Jun 2019</span>
             <span class="timeline-loc">İstanbul, Turkey</span>
           </div>
-          <h3 class="timeline-role">M.Sc. Researcher</h3>
+          <h3 class="timeline-role">Data Science Consultant</h3>
           <p class="timeline-org">Boğaziçi University &amp; BKM — Interbank Card Center</p>
           <ul class="timeline-bullets">
-            <li>Applied machine learning over large-scale transaction data.</li>
-            <li>Built an interpretable fraud detection algorithm.</li>
-            <li>Developed a merchant risk scoring tool.</li>
+            <li>Delivered a paid university–industry consulting engagement, building Spark-based machine-learning pipelines for large-scale credit-card transaction data.</li>
+            <li>Developed interpretable fraud-detection and merchant-risk models adopted in BKM's production analytics.</li>
           </ul>
         </li>
 
@@ -176,21 +179,21 @@
           <h3 class="timeline-role">Data Scientist</h3>
           <p class="timeline-org">Digital Helix — DeepC</p>
           <ul class="timeline-bullets">
-            <li>Supervised and unsupervised brain lesion detection on MRI scans.</li>
-            <li>Medical image segmentation, classification, and feature regression with deep models.</li>
+            <li>Developed supervised and unsupervised deep-learning workflows for brain-lesion detection in MRI scans.</li>
+            <li>Worked across image segmentation, classification, and feature regression on high-dimensional medical images.</li>
           </ul>
         </li>
 
         <li class="timeline-item reveal">
           <div class="timeline-meta">
             <span class="timeline-date">Feb 2017 – Apr 2018</span>
-            <span class="timeline-loc">İstanbul, Türkiye</span>
+            <span class="timeline-loc">İstanbul, Turkey</span>
           </div>
           <h3 class="timeline-role">M.Sc. Researcher</h3>
-          <p class="timeline-org">Boğaziçi University &amp; Borusan R&amp;D</p>
+          <p class="timeline-org">Boğaziçi University &amp; Borusan — R&amp;D</p>
           <ul class="timeline-bullets">
-            <li>Unsupervised anomaly detection on wind turbines.</li>
-            <li>Bayesian and deep-learning models for time-series anomaly detection.</li>
+            <li>Developed unsupervised anomaly-detection models for industrial wind-turbine sensor streams.</li>
+            <li>Built Bayesian and deep time-series models for real-time detection in noisy multivariate signals.</li>
           </ul>
         </li>
 
@@ -231,6 +234,65 @@
       </ol>
     </section>
 
+    <!-- ========== SKILLS ========== -->
+    <section id="skills" class="section">
+      <h2 class="section-title reveal">Skills &amp; Background</h2>
+
+      <div class="skills-grid">
+        <div class="skill-group reveal">
+          <h3>Core expertise</h3>
+          <div class="skill-tags">
+            <span>Time-series forecasting</span><span>Transformers</span><span>Causal inference</span><span>Counterfactuals</span><span>Probabilistic modeling</span><span>Calibration</span><span>Bayesian &amp; state-space models</span><span>Production ML</span><span>Model governance</span><span>Longitudinal healthcare data</span>
+          </div>
+        </div>
+
+        <div class="skill-group reveal">
+          <h3>Core ML</h3>
+          <div class="skill-tags">
+            <span>Python</span><span>PyTorch</span><span>PyTorch Lightning</span><span>Spark ML</span>
+          </div>
+        </div>
+
+        <div class="skill-group reveal">
+          <h3>Data platform</h3>
+          <div class="skill-tags">
+            <span>Databricks</span><span>PySpark</span><span>SQL</span>
+          </div>
+        </div>
+
+        <div class="skill-group reveal">
+          <h3>MLOps &amp; engineering</h3>
+          <div class="skill-tags">
+            <span>MLflow</span><span>Hydra / OmegaConf</span><span>pytest</span><span>GitHub Actions</span><span>uv</span><span>Pyrefly</span>
+          </div>
+        </div>
+
+        <div class="skill-group reveal">
+          <h3>Additional</h3>
+          <div class="skill-tags">
+            <span>Stan</span><span>R</span><span>C/C++</span><span>MATLAB</span><span>TensorFlow</span><span>Julia</span>
+          </div>
+        </div>
+
+        <div class="skill-group reveal">
+          <h3>Languages</h3>
+          <div class="skill-tags">
+            <span>Turkish — native</span><span>English — professional</span><span>Finnish — intermediate</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="skill-notes reveal">
+        <h3>Recognition &amp; community</h3>
+        <ul>
+          <li>Ranked 112th among approximately 2 million participants in Turkey's university entrance examination — top 0.006% nationally.</li>
+          <li>BUALERT engineering team — designed car electronics, ECU, and energy-management systems for an alternative-energy racing team.</li>
+          <li>Scientific Symposium, by Students for Students — volunteer, May 2021, Espoo.</li>
+          <li>Machine Learning at the Bosphorus, İsmail Arı Summer School — volunteer, July 2018, İstanbul.</li>
+        </ul>
+      </div>
+    </section>
+
     <!-- ========== PUBLICATIONS ========== -->
     <section id="publications" class="section">
       <h2 class="section-title reveal">Publications</h2>
@@ -249,38 +311,38 @@
 
         <article class="project-card reveal">
           <h3>Coupled HMMs for MRSA decolonization</h3>
-          <p>Modeled bacterial colonization as interacting Markov processes across body sites, quantifying site-specific clearance and treatment effects.</p>
+          <p>Modeled MRSA colonization as interacting Markov processes across body sites, estimating site-specific clearance and treatment effects. Published in <em>Journal of the Royal Society Interface</em> (2022).</p>
           <div class="project-tags"><span>Bayesian</span><span>HMM</span><span>Healthcare</span></div>
         </article>
 
         <article class="project-card reveal">
           <h3>Mixture of Coupled HMMs</h3>
-          <p>A robust extension to capture heterogeneous treatment responses across patients in multivariate healthcare time series.</p>
+          <p>A robust extension that discovers latent response subgroups across patients in multivariate healthcare time series. Presented at <em>ML4H</em> (2023).</p>
           <div class="project-tags"><span>Mixture models</span><span>Time series</span></div>
         </article>
 
         <article class="project-card reveal">
           <h3>Glucose &amp; insulin response modeling</h3>
-          <p>Multi-output hierarchical Gaussian processes for individual assessment of postprandial glucose and insulin after bariatric surgery.</p>
+          <p>Uncertainty-aware multi-output hierarchical Gaussian processes for individual assessment of postprandial glucose and insulin after bariatric surgery. Published in <em>Communications Medicine</em> (2025).</p>
           <div class="project-tags"><span>Gaussian Processes</span><span>Healthcare</span></div>
         </article>
 
         <article class="project-card reveal">
           <h3>Sparse Kalman filtering</h3>
-          <p>Sparse filtering for physical systems with nonlinear dynamics, handling partially observed states.</p>
+          <p>Sparse Kalman filtering that scales nonlinear state estimation to high-dimensional physical systems with partially observed states.</p>
           <div class="project-tags"><span>State-space</span><span>Nonlinear dynamics</span></div>
         </article>
 
         <article class="project-card reveal">
           <h3>Analog-digital Ising machine</h3>
-          <p>A model for analog-digital Ising machines, applied to multi-user MIMO detection with implications for 6G research.</p>
+          <p>An analog–digital Ising machine model for multi-user MIMO detection, translating memristor hardware constraints into algorithm design for emerging 6G systems.</p>
           <div class="project-tags"><span>Optimization</span><span>Wireless</span></div>
         </article>
 
         <article class="project-card reveal">
-          <h3>Interpretable fraud detection</h3>
-          <p>Machine learning over large-scale transaction data to build interpretable fraud scores for merchants.</p>
-          <div class="project-tags"><span>Applied ML</span><span>Big data</span></div>
+          <h3>Fraud detection &amp; merchant risk</h3>
+          <p>Spark-based pipelines over large-scale credit-card transaction data, producing interpretable fraud-detection and merchant-risk models adopted in BKM's production analytics.</p>
+          <div class="project-tags"><span>Applied ML</span><span>Spark</span><span>Big data</span></div>
         </article>
 
       </div>
@@ -295,7 +357,7 @@
         <div class="contact-links">
           <a href="https://github.com/onurpoyraz" target="_blank" rel="noopener">GitHub</a>
           <a href="https://www.linkedin.com/in/onur-poyraz" target="_blank" rel="noopener">LinkedIn</a>
-          <a href="https://scholar.google.com/citations?user=onur-poyraz" target="_blank" rel="noopener">Google Scholar</a>
+          <a href="https://scholar.google.com/citations?user=Unuu7tgAAAAJ&amp;hl=en" target="_blank" rel="noopener">Google Scholar</a>
         </div>
       </div>
     </section>

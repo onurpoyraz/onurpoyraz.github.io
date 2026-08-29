@@ -38,7 +38,8 @@ Every push to `main` redeploys automatically.
 │   ├── main.js             # Theme toggle, scroll-spy, reveal animations, mobile nav
 │   └── publications.js     # Loads publications.bib, parses it, renders the list
 ├── assets/
-│   ├── cv.pdf              # Your CV — linked from the hero "Download CV" button
+│   ├── industry.pdf         # Industry CV — linked from the hero "Industry CV" button
+│   ├── academic.pdf        # Academic CV — linked from the hero "Academic CV" button
 │   ├── photo.jpg           # Profile photo shown in the hero
 │   ├── publications.bib    # Source of truth for the Publications section
 │   └── favicon.svg         # Browser tab icon
@@ -91,7 +92,7 @@ Edit `<section id="projects">`. Each project is a `<article class="project-card"
 Edit `<section id="hero">` in `index.html`. Replace `assets/photo.jpg` to change the photo (same filename, or update the `<img src>` attribute).
 
 ### Change your CV
-Replace `assets/cv.pdf` with a new file of the same name.
+Two CVs are published: `assets/industry.pdf` (industry) and `assets/academic.pdf` (academic). Replace either file with a new one of the same name; both are linked from the hero.
 
 ### Change social / contact links
 Hero section and Contact section in `index.html` both have link lists. Search for `github.com/onurpoyraz` to find them quickly.
