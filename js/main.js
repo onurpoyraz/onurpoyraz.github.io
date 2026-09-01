@@ -1,26 +1,29 @@
 /* ============================================================
    main.js
    - Theme toggle (persisted in localStorage)
-   - Reveal-on-scroll animations via IntersectionObserver
-   - TOC scroll-spy (highlight active section in sidebar)
-   - Mobile nav open/close
-   - Year in footer
+   - Reveal-on-scroll
+   - Scroll-spy: lights the active dot in both the rail and the dock,
+     and names the current section in the dock label
+
+   The material and the hero canvas live in glass.js.
    ============================================================ */
 
 (function () {
   const root = document.documentElement;
 
-  /* ---------- Theme toggle ---------- */
+  /* ---------- Theme ---------- */
   const toggleBtn = document.getElementById('theme-toggle');
   function currentTheme() {
     return root.getAttribute('data-theme')
       || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
   }
-  toggleBtn.addEventListener('click', () => {
-    const next = currentTheme() === 'dark' ? 'light' : 'dark';
-    root.setAttribute('data-theme', next);
-    localStorage.setItem('theme', next);
-  });
+  if (toggleBtn) {
+    toggleBtn.addEventListener('click', () => {
+      const next = currentTheme() === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+    });
+  }
 
   /* ---------- Reveal on scroll ---------- */
   const io = new IntersectionObserver((entries) => {
@@ -33,35 +36,23 @@
   }, { threshold: 0.12 });
   document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
-  /* ---------- Scroll-spy for TOC ---------- */
+  /* ---------- Scroll-spy ---------- */
   const sections = document.querySelectorAll('main section[id]');
-  const tocLinks = document.querySelectorAll('.toc-link');
+  const navLinks = document.querySelectorAll('.nav-link');
+  const dockLabel = document.getElementById('dock-label');
+
+  function setActive(id) {
+    navLinks.forEach(l => l.classList.toggle('active', l.getAttribute('href') === `#${id}`));
+    if (dockLabel) {
+      const match = document.querySelector(`.nav-dock a[href="#${id}"]`);
+      if (match) dockLabel.textContent = match.getAttribute('aria-label');
+    }
+  }
+
   const spy = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const id = entry.target.id;
-        tocLinks.forEach(l => l.classList.toggle('active', l.getAttribute('href') === `#${id}`));
-      }
+      if (entry.isIntersecting) setActive(entry.target.id);
     });
   }, { rootMargin: '-40% 0px -55% 0px' });
   sections.forEach(s => spy.observe(s));
-
-  /* ---------- Mobile nav ---------- */
-  const menuBtn = document.getElementById('menu-btn');
-  const mobileNav = document.getElementById('mobile-nav');
-  menuBtn.addEventListener('click', () => {
-    const open = mobileNav.classList.toggle('open');
-    menuBtn.classList.toggle('open', open);
-    menuBtn.setAttribute('aria-expanded', open);
-    mobileNav.setAttribute('aria-hidden', !open);
-  });
-  mobileNav.querySelectorAll('a').forEach(a => {
-    a.addEventListener('click', () => {
-      mobileNav.classList.remove('open');
-      menuBtn.classList.remove('open');
-      menuBtn.setAttribute('aria-expanded', 'false');
-      mobileNav.setAttribute('aria-hidden', 'true');
-    });
-  });
-
 })();

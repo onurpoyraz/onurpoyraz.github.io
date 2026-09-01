@@ -32,10 +32,11 @@ Every push to `main` redeploys automatically.
 .
 ├── index.html              # All page content lives here
 ├── css/
-│   ├── themes.css          # Colors for light/dark mode (edit to re-theme)
+│   ├── themes.css          # Palette + glass material tokens (edit to re-theme)
 │   └── style.css           # Layout, typography, components, animations
 ├── js/
-│   ├── main.js             # Theme toggle, scroll-spy, reveal animations, mobile nav
+│   ├── glass.js            # Glass specular tracking + the hero forecast canvas
+│   ├── main.js             # Theme toggle, scroll-spy, reveal animations
 │   └── publications.js     # Loads publications.bib, parses it, renders the list
 ├── assets/
 │   ├── industry.pdf         # Industry CV — linked from the hero "Industry CV" button
@@ -98,14 +99,24 @@ Two CVs are published: `assets/industry.pdf` (industry) and `assets/academic.pdf
 Hero section and Contact section in `index.html` both have link lists. Search for `github.com/onurpoyraz` to find them quickly.
 
 ### Change colors (theme)
-Edit `css/themes.css`. The `:root` block defines light mode; the `[data-theme='dark']` block defines dark mode. The key variable is `--accent` — change it and the entire site re-tints. There is also a `prefers-color-scheme: dark` block that mirrors the dark-mode variables, so the dark theme applies before JS runs on users who prefer dark.
+Edit `css/themes.css`. The `:root` block defines light mode; the `[data-theme='dark']` block defines dark mode; a `prefers-color-scheme: dark` block mirrors the dark values so the theme is right before JS runs.
+
+- `--accent` re-tints links, active states, and buttons.
+- `--c1`…`--c4` are the four mixture-component colors. They drive the hero forecast canvas and the ambient mesh, so changing them changes the whole background.
+- The `--glass-*` tokens control the material: fill opacity, rim brightness, blur radius, saturation, and shadow.
+
+### The glass material
+Add `class="glass"` to any element to make it glass, plus `glass-capsule` for a pill shape and `glass-interactive` for the hover lift. The rule the design follows: **glass is the control layer, content is the ground** — things you click are glass, things you read sit on a plain frosted slab so the text stays crisp.
+
+### The hero animation
+`js/glass.js` draws it. `NOW` sets where the forecast boundary sits, `PATHS` how many posterior samples are drawn, and `SCALE` the canvas resolution (0.5 = half res, which is plenty behind the mask). It pauses when the hero scrolls away, when the tab is hidden, and when the visitor prefers reduced motion.
 
 ### Tune animations / layout
 Layout, spacing, and animations are in `css/style.css`. Section boundaries inside that file are marked with banner comments (e.g. `/* HERO */`, `/* TIMELINE */`).
 
 ### Add a new section
 1. Add a `<section id="yoursection">` block in `index.html`.
-2. Add a matching `<li><a href="#yoursection" class="toc-link">Your Section</a></li>` to **both** the sidebar `<aside class="toc">` and the `<nav class="mobile-nav">`.
+2. Add a matching `<li><a href="#yoursection" class="nav-link"><span>Your Section</span></a></li>` to the `<nav class="nav-rail">`, and `<li><a href="#yoursection" class="nav-link" aria-label="Your Section"></a></li>` to the `<nav class="nav-dock">`.
 3. Wrap any elements you want to animate-in on scroll with `class="reveal"`.
 
 No JS changes needed — scroll-spy picks up any `section[id]` automatically.

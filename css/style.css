@@ -1,100 +1,345 @@
 /* ============================================================
-   BASE
+   style.css
+
+   Reading order:
+     1. Reset + ground        the surface everything floats on
+     2. Glass                 the material itself (.glass + modifiers)
+     3. Nav                   rail (desktop) / capsule (mobile)
+     4. Hero                  name, tagline, forecast canvas
+     5. Sections              titles + content slabs
+     6. Timeline              experience + education
+     7. Skills
+     8. Publications
+     9. Projects
+    10. Contact
+    11. Motion + responsive
+   ============================================================ */
+
+/* ============================================================
+   1. RESET + GROUND
    ============================================================ */
 *, *::before, *::after { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+
+* { margin: 0; padding: 0; }
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+html { overflow-x: hidden; }
 
 body {
-  margin: 0;
-  font-family: var(--font-sans);
+  font-family: var(--font-body);
   font-size: 16px;
   line-height: 1.65;
   color: var(--text);
-  background: var(--bg);
+  background: var(--ground);
   -webkit-font-smoothing: antialiased;
-  transition: background var(--transition-slow), color var(--transition-slow);
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  min-height: 100vh;
 }
+
+/* The ambient mesh. Fixed, so every piece of glass on the page has
+   something worth refracting no matter how far you have scrolled. */
+.mesh {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* The colour itself. Kept as a child so it can be scaled and drifted
+   without an `inset` that would push the blobs off screen — the reason an
+   earlier version left the middle of the viewport flat, and with nothing
+   behind it the glass had nothing to refract and read as grey plastic.
+   The centre band carries the strongest colour because that is exactly
+   where the glass chrome sits. */
+.mesh::before {
+  content: '';
+  position: absolute;
+  inset: -15%;
+  background:
+    radial-gradient(46% 40% at 20% 22%, var(--mesh-a), transparent 68%),
+    radial-gradient(50% 44% at 78% 16%, var(--mesh-b), transparent 68%),
+    radial-gradient(44% 40% at 88% 62%, var(--mesh-c), transparent 68%),
+    radial-gradient(48% 42% at 12% 70%, var(--mesh-d), transparent 68%),
+    radial-gradient(56% 46% at 50% 46%, var(--mesh-b), transparent 70%),
+    radial-gradient(40% 36% at 62% 88%, var(--mesh-c), transparent 68%);
+  opacity: 0.78;
+  animation: drift 42s var(--ease) infinite alternate;
+}
+
+@keyframes drift {
+  0%   { transform: translate3d(0, 0, 0) scale(1); }
+  50%  { transform: translate3d(3%, -2.5%, 0) scale(1.1); }
+  100% { transform: translate3d(-2.5%, 3%, 0) scale(1.04); }
+}
+
+/* Deepen only the very top and bottom so headings keep their contrast,
+   while the band the glass lives in stays saturated. */
+.mesh::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(var(--ground-deep), transparent 14%, transparent 86%, var(--ground-deep));
+  opacity: 0.7;
+}
+
+main {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 2rem 6rem;
+  position: relative;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: -0.022em;
+}
+
+p { margin-bottom: 1rem; }
+p:last-child { margin-bottom: 0; }
 
 a {
   color: var(--accent);
   text-decoration: none;
-  transition: color var(--transition);
+  transition: color var(--t-fast);
 }
 a:hover { color: var(--accent-hover); }
 
-h1, h2, h3 { margin: 0 0 0.5em; font-weight: 600; letter-spacing: -0.01em; }
-h1 { font-size: clamp(2rem, 5vw, 3rem); }
-h2 { font-size: 1.75rem; }
-h3 { font-size: 1.1rem; }
-p  { margin: 0 0 1em; color: var(--text); }
+ul, ol { list-style: none; }
 
-ul, ol { margin: 0; padding: 0; }
-li { list-style: none; }
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
 
-::selection { background: var(--accent-soft); color: var(--text); }
+/* Utility face: eyebrows, dates, tags, anything that is data not prose. */
+.mono {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
 
 /* ============================================================
-   LAYOUT
+   2. GLASS
+
+   Four stacked parts make a piece of glass believable:
+     .glass          the frosted body    — blur + saturate + fill
+     .glass::before  the refracted rim   — a ring of LESS blurred,
+                     brighter, more saturated backdrop. This is the
+                     edge-lensing a real lens shows, and it is what
+                     separates this from flat glassmorphism.
+     .glass::after   the specular sheen  — a fixed diagonal glint plus
+                     a soft highlight that tracks the pointer.
+     box-shadow      a tight contact shadow + an inset top light.
    ============================================================ */
-main {
-  max-width: var(--max-width);
-  margin: 0 auto;
-  padding: 0 1.5rem;
-}
-
-.section {
-  padding: 5rem 0 3rem;
-  scroll-margin-top: 2rem;
-}
-
-.section-title {
-  font-size: 1.6rem;
-  margin-bottom: 2rem;
+.glass {
   position: relative;
-  padding-bottom: 0.5rem;
+  background: var(--glass-fill);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat)) brightness(var(--glass-bright));
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat)) brightness(var(--glass-bright));
+  border-radius: var(--r-lg);
+  box-shadow:
+    inset 0 1px 0 var(--glass-rim),
+    inset 0 -6px 14px -8px var(--glass-rim-dim),
+    0 0 0 1px var(--glass-edge),
+    var(--glass-shadow);
+  transition: background var(--t), box-shadow var(--t), transform var(--t);
 }
-.section-title::after {
+
+/* Refracted rim: a ring of backdrop pulled through a much stronger lens
+   than the body, so the edge shows a brighter, more saturated, less
+   blurred slice of whatever is behind. That mismatch between rim and
+   body is what the eye reads as the thickness of real glass.
+
+   It must NOT be given a negative z-index — that would push it behind
+   the element's own background and the effect disappears entirely. */
+.glass::before {
   content: '';
   position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 2.5rem;
-  height: 3px;
-  background: var(--accent);
-  border-radius: 2px;
+  inset: 0;
+  padding: var(--glass-rim-w);
+  border-radius: inherit;
+  -webkit-backdrop-filter: blur(0.5px) saturate(320%) brightness(var(--glass-rim-bright));
+  backdrop-filter: blur(0.5px) saturate(320%) brightness(var(--glass-rim-bright));
+
+  /* Ring mask. Order matters: the `mask` shorthand resets
+     `-webkit-mask-composite`, so the legacy WebKit value has to be set
+     AFTER both shorthands or Safari falls back to source-over and paints
+     a filled rectangle instead of a ring. The two properties also take
+     different keywords — `xor` for the WebKit one, `exclude` for the
+     standard one — so both are needed. */
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  -webkit-mask-composite: xor;
+  pointer-events: none;
 }
+
+/* Specular. --mx/--my are written by js/glass.js on pointer move and
+   default to the upper-left so the glint is there before you touch it. */
+.glass::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    radial-gradient(circle 160px at var(--mx, 22%) var(--my, 4%),
+      var(--glass-spec), transparent 68%),
+    linear-gradient(150deg, var(--glass-spec) 0%, transparent 38%);
+  opacity: 0.55;
+  pointer-events: none;
+  transition: opacity var(--t);
+}
+
+/* Interactive glass lifts and brightens under the pointer. */
+.glass-interactive { cursor: pointer; }
+.glass-interactive:hover,
+.glass-interactive:focus-visible {
+  background: var(--glass-fill-strong);
+  transform: translateY(-2px);
+}
+.glass-interactive:hover::after,
+.glass-interactive:focus-visible::after { opacity: 0.85; }
+.glass-interactive:active { transform: translateY(0) scale(0.988); }
+
+.glass-capsule { border-radius: var(--r-capsule); }
 
 /* ============================================================
-   TOPBAR + THEME TOGGLE
+   3. NAV — one object, two orientations
+
+   Desktop: a vertical glass rail of dots on the left. Hovering or
+   tabbing into it expands the rail and reveals the labels.
+   Mobile: the same dots as a floating capsule at the bottom, with the
+   current section named beside them.
    ============================================================ */
-.topbar {
+.nav-rail {
   position: fixed;
-  top: 1rem;
-  right: 1.25rem;
-  z-index: 50;
+  left: 1.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 60;
+  padding: 0.75rem 0;
+  width: var(--rail-width);
+  transition: width var(--t), background var(--t);
+  overflow: hidden;
+}
+.nav-rail:hover,
+.nav-rail:focus-within { width: 190px; }
+
+.nav-rail ul { display: flex; flex-direction: column; gap: 0.1rem; }
+
+.nav-rail a {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.85rem;
+  padding: 0.5rem 0 0.5rem 1.25rem;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: color var(--t-fast);
+}
+.nav-rail a::before {
+  content: '';
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.35;
+  transition: opacity var(--t-fast), transform var(--t-fast), box-shadow var(--t-fast);
+}
+.nav-rail a span {
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: opacity var(--t), transform var(--t);
+}
+.nav-rail:hover a span,
+.nav-rail:focus-within a span { opacity: 1; transform: translateX(0); }
+
+.nav-rail a:hover { color: var(--text); }
+.nav-rail a:hover::before { opacity: 0.7; }
+
+.nav-rail a.active { color: var(--accent); }
+.nav-rail a.active::before {
+  opacity: 1;
+  transform: scale(1.35);
+  box-shadow: 0 0 12px var(--accent);
 }
 
-.theme-toggle, .menu-btn {
-  background: var(--bg-elevated);
-  color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  width: 40px;
-  height: 40px;
-  display: inline-flex;
+/* Mobile capsule */
+.nav-dock {
+  display: none;
+  position: fixed;
+  left: 50%;
+  bottom: 1rem;
+  transform: translateX(-50%);
+  z-index: 60;
   align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: background var(--transition), border-color var(--transition), transform var(--transition);
+  gap: 0.85rem;
+  padding: 0.6rem 1rem;
+  max-width: calc(100vw - 2rem);
 }
-.theme-toggle:hover, .menu-btn:hover {
-  border-color: var(--accent);
-  color: var(--accent);
+.nav-dock ul { display: flex; align-items: center; gap: 0.15rem; }
+.nav-dock a {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 32px;
+  color: var(--text-muted);
+}
+.nav-dock a::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.35;
+  transition: opacity var(--t-fast), transform var(--t-fast), box-shadow var(--t-fast);
+}
+.nav-dock a.active { color: var(--accent); }
+.nav-dock a.active::before {
+  opacity: 1;
+  transform: scale(1.4);
+  box-shadow: 0 0 10px var(--accent);
+}
+.nav-dock .dock-label {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text);
+  min-width: 5.5em;
+  border-left: 1px solid var(--hairline);
+  padding-left: 0.85rem;
 }
 
+/* Theme toggle capsule */
+.theme-toggle {
+  position: fixed;
+  top: 1.25rem;
+  right: 1.25rem;
+  z-index: 60;
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  border: none;
+  color: var(--text);
+  font: inherit;
+}
+.theme-toggle svg { position: relative; z-index: 1; }
 .theme-toggle .icon-moon { display: none; }
 [data-theme='dark'] .theme-toggle .icon-sun { display: none; }
 [data-theme='dark'] .theme-toggle .icon-moon { display: block; }
@@ -103,459 +348,518 @@ main {
   :root:not([data-theme]) .theme-toggle .icon-moon { display: block; }
 }
 
-.menu-btn { display: none; flex-direction: column; gap: 4px; padding: 0 10px; }
-.menu-btn span {
-  display: block;
-  width: 18px;
-  height: 2px;
-  background: currentColor;
-  border-radius: 2px;
-  transition: transform var(--transition), opacity var(--transition);
-}
-.menu-btn.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
-.menu-btn.open span:nth-child(2) { opacity: 0; }
-.menu-btn.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
-
-/* ============================================================
-   SIDEBAR TOC
-   ============================================================ */
-.toc {
+/* Skip link — first tab stop, hidden until focused. */
+.skip-link {
   position: fixed;
-  top: 50%;
-  left: 2rem;
-  transform: translateY(-50%);
-  z-index: 40;
-  width: var(--toc-width);
-}
-.toc ul { display: flex; flex-direction: column; gap: 0.5rem; }
-.toc-link {
-  display: inline-block;
-  color: var(--text-subtle);
+  top: 1.25rem;
+  left: 50%;
+  transform: translate(-50%, -160%);
+  z-index: 100;
+  padding: 0.6rem 1.1rem;
+  color: var(--text);
   font-size: 0.85rem;
-  padding: 0.25rem 0 0.25rem 1rem;
-  border-left: 2px solid var(--border);
-  transition: color var(--transition), border-color var(--transition), padding var(--transition);
+  transition: transform var(--t);
 }
-.toc-link:hover {
-  color: var(--text);
-  border-color: var(--text-muted);
-}
-.toc-link.active {
-  color: var(--accent);
-  border-color: var(--accent);
-  padding-left: 1.25rem;
-  font-weight: 500;
-}
+.skip-link:focus { transform: translate(-50%, 0); }
 
 /* ============================================================
-   MOBILE NAV
-   ============================================================ */
-.mobile-nav {
-  position: fixed;
-  inset: 0;
-  background: var(--bg);
-  z-index: 45;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity var(--transition);
-}
-.mobile-nav.open {
-  display: flex;
-  opacity: 1;
-  pointer-events: auto;
-}
-.mobile-nav ul {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-  text-align: center;
-}
-.mobile-nav a {
-  font-size: 1.4rem;
-  color: var(--text);
-}
+   4. HERO
 
-/* ============================================================
-   HERO
+   The canvas behind the name is a live posterior forecast: sample
+   paths fanning into a widening credible band past the "now" line.
+   It is the one thing on the page that moves on its own, and it is
+   the thesis — this is what the work actually produces.
    ============================================================ */
 .hero {
-  min-height: 90vh;
+  position: relative;
+  min-height: 100svh;
   display: flex;
   align-items: center;
-  padding: 3rem 0;
+  padding: 6rem 0 4rem;
 }
-.hero-content { text-align: left; }
+/* Full-bleed canvas without widening the page's scrollable area. */
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  overflow: clip;
+  pointer-events: none;
+}
+
+.hero-canvas {
+  position: absolute;
+  top: -2rem;
+  bottom: -2rem;
+  left: 50%;
+  width: 100vw;
+  max-width: 100vw;
+  transform: translateX(-50%);
+  z-index: -1;
+  pointer-events: none;
+  -webkit-mask-image: radial-gradient(70% 60% at 50% 50%, #000 30%, transparent 100%);
+  mask-image: radial-gradient(70% 60% at 50% 50%, #000 30%, transparent 100%);
+}
+
+.hero-content { position: relative; max-width: 44rem; }
+
+.hero-eyebrow {
+  color: var(--text-subtle);
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+.hero-eyebrow::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--hairline), transparent);
+}
+
 .hero-photo {
-  width: 120px;
-  height: 120px;
+  width: 92px;
+  height: 92px;
   border-radius: 50%;
   object-fit: cover;
-  margin-bottom: 1.5rem;
-  border: 3px solid var(--accent-soft);
+  margin-bottom: 1.75rem;
+  box-shadow:
+    0 0 0 1px var(--glass-edge),
+    inset 0 1px 0 var(--glass-rim),
+    var(--glass-shadow);
 }
+
 .hero-name {
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  margin-bottom: 0.5rem;
+  font-size: clamp(2.75rem, 8vw, 4.75rem);
+  letter-spacing: -0.035em;
+  margin-bottom: 1rem;
 }
+
 .hero-tagline {
-  font-size: 1.15rem;
+  font-size: clamp(1.05rem, 2.2vw, 1.3rem);
+  overflow-wrap: break-word;
   color: var(--text-muted);
-  margin-bottom: 2rem;
-  max-width: 42rem;
+  max-width: 34rem;
+  margin-bottom: 2.25rem;
+  text-wrap: balance;
 }
+
 .hero-links {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
+  gap: 0.6rem;
   align-items: center;
 }
-.hero-links a {
-  font-size: 0.95rem;
-  padding: 0.5rem 0;
-  color: var(--text-muted);
-  border-bottom: 1px solid transparent;
-}
-.hero-links a:hover {
-  color: var(--accent);
-  border-bottom-color: var(--accent);
-}
-.btn-accent {
-  background: var(--accent);
-  color: #fff !important;
-  padding: 0.55rem 1rem !important;
-  border-radius: var(--radius);
-  border-bottom: none !important;
+.hero-links > a {
+  font-size: 0.9rem;
   font-weight: 500;
+  padding: 0.6rem 1.1rem;
+  color: var(--text);
 }
-.btn-accent:hover {
-  background: var(--accent-hover);
-  color: #fff !important;
-  border-bottom: none !important;
-}
-.btn-outline {
+.hero-links > a:hover { color: var(--text); }
+
+/* The two CV buttons are the page's primary action, so they are the
+   only glass tinted with the accent. */
+.btn-cv {
   color: var(--accent) !important;
-  padding: 0.55rem 1rem !important;
-  border: 1px solid var(--accent);
-  border-radius: var(--radius);
-  border-bottom: 1px solid var(--accent) !important;
-  font-weight: 500;
-  transition: background var(--transition), color var(--transition);
-}
-.btn-outline:hover {
   background: var(--accent-soft);
-  color: var(--accent-hover) !important;
-  border-color: var(--accent-hover);
-  border-bottom-color: var(--accent-hover) !important;
 }
+.btn-cv:hover { color: var(--accent-hover) !important; }
+
+/* Micro-annotations that let the canvas read as an instrument. */
+.hero-legend {
+  position: absolute;
+  left: 0;
+  bottom: 2.5rem;
+  display: flex;
+  gap: 1.25rem;
+  color: var(--text-subtle);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.hero-legend span { display: flex; align-items: center; gap: 0.45rem; }
+.hero-legend span::before {
+  content: '';
+  width: 14px;
+  height: 2px;
+  border-radius: 2px;
+  background: currentColor;
+}
+.hero-legend .lg-obs::before { background: var(--c2); }
+.hero-legend .lg-fc::before { background: var(--c1); }
+.hero-legend .lg-ci::before { background: var(--c3); opacity: 0.45; height: 8px; }
 
 /* ============================================================
-   TIMELINE (experience + education)
+   5. SECTIONS
    ============================================================ */
-.timeline { border-left: 2px solid var(--border); padding-left: 1.5rem; }
+.section {
+  padding: 6rem 0 1rem;
+  scroll-margin-top: 4rem;
+}
+
+.section-title {
+  font-size: clamp(1.6rem, 3.4vw, 2.15rem);
+  margin-bottom: 2.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+.section-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--hairline), transparent);
+}
+
+/* Prose sits on a whisper of frost — enough to lift it off the mesh,
+   not enough to compete with the glass chrome. */
+.section-body {
+  font-size: 1.05rem;
+  color: var(--text-muted);
+  background: var(--slab);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  border-radius: var(--r-md);
+  padding: 1.75rem;
+  border: 1px solid var(--hairline);
+}
+.section-body p + p { margin-top: 0.25rem; }
+
+/* ============================================================
+   6. TIMELINE
+   ============================================================ */
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
 .timeline-item {
   position: relative;
-  padding-bottom: 2.5rem;
+  background: var(--slab);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-md);
+  padding: 1.5rem 1.5rem 1.5rem 2.25rem;
+  transition: border-color var(--t), background var(--t);
 }
 .timeline-item::before {
   content: '';
   position: absolute;
-  left: -1.625rem;
-  top: 0.4rem;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: var(--bg);
-  border: 2px solid var(--accent);
-  transition: background var(--transition), transform var(--transition);
+  left: 1rem;
+  top: 1.9rem;
+  bottom: 1.9rem;
+  width: 2px;
+  border-radius: 2px;
+  background: linear-gradient(var(--accent), transparent);
+  opacity: 0.45;
+  transition: opacity var(--t);
 }
-.timeline-item:hover::before {
-  background: var(--accent);
-  transform: scale(1.2);
-}
+.timeline-item:hover { border-color: var(--glass-edge); background: var(--glass-fill); }
+.timeline-item:hover::before { opacity: 1; }
+
 .timeline-meta {
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
-  font-size: 0.82rem;
-  color: var(--text-subtle);
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.6rem;
   font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-subtle);
 }
-.timeline-role { margin: 0.1rem 0 0.15rem; }
-.timeline-org { color: var(--text-muted); margin: 0 0 0.5rem; font-size: 0.95rem; }
+.timeline-date { color: var(--accent); }
+
+.timeline-role { font-size: 1.15rem; margin-bottom: 0.2rem; }
+.timeline-org { color: var(--text-muted); font-size: 0.92rem; margin-bottom: 0.9rem; }
 .timeline-desc { color: var(--text-muted); font-size: 0.95rem; }
-.timeline-bullets { margin: 0.25rem 0 0; }
+
+.timeline-bullets { display: flex; flex-direction: column; gap: 0.45rem; }
 .timeline-bullets li {
   position: relative;
-  padding-left: 1rem;
+  padding-left: 1.1rem;
   color: var(--text-muted);
   font-size: 0.95rem;
-  margin-bottom: 0.25rem;
 }
 .timeline-bullets li::before {
-  content: '▸';
+  content: '';
   position: absolute;
   left: 0;
-  color: var(--accent);
+  top: 0.62em;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0.6;
 }
 
 /* ============================================================
-   SKILLS
+   7. SKILLS
    ============================================================ */
 .skills-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 1.75rem 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  align-items: start;
+  gap: 0.75rem;
+}
+
+.skill-group {
+  background: var(--slab);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-md);
+  padding: 1.35rem;
 }
 .skill-group h3,
 .skill-notes h3 {
-  font-size: 0.75rem;
   font-family: var(--font-mono);
+  font-size: 0.66rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
   color: var(--text-subtle);
-  margin-bottom: 0.7rem;
+  margin-bottom: 0.9rem;
 }
-.skill-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+
+.skill-tags { display: flex; flex-wrap: wrap; gap: 0.35rem; }
 .skill-tags span {
   font-size: 0.78rem;
-  padding: 0.25rem 0.6rem;
+  padding: 0.3rem 0.7rem;
+  border-radius: var(--r-capsule);
   background: var(--accent-soft);
   color: var(--accent);
-  border-radius: 4px;
+  border: 1px solid transparent;
+  transition: border-color var(--t-fast);
 }
-.skill-notes { margin-top: 2.5rem; }
+.skill-tags span:hover { border-color: var(--accent); }
+
+.skill-notes { margin-top: 0.75rem; padding: 1.35rem; }
+.skill-notes ul { display: flex; flex-direction: column; gap: 0.5rem; }
 .skill-notes li {
   position: relative;
-  padding-left: 1rem;
+  padding-left: 1.1rem;
   color: var(--text-muted);
-  font-size: 0.95rem;
-  margin-bottom: 0.35rem;
+  font-size: 0.93rem;
 }
 .skill-notes li::before {
-  content: '▸';
+  content: '';
   position: absolute;
   left: 0;
-  color: var(--accent);
+  top: 0.62em;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0.6;
 }
 
 /* ============================================================
-   PUBLICATIONS
+   8. PUBLICATIONS
    ============================================================ */
-.pub-filters {
-  display: flex;
-  gap: 0.5rem;
-  margin-bottom: 1.5rem;
-  flex-wrap: wrap;
-}
+.pub-filters { display: flex; gap: 0.5rem; margin-bottom: 1.75rem; flex-wrap: wrap; }
 .pub-filter {
-  background: transparent;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.55rem 1.1rem;
+  border: none;
   color: var(--text-muted);
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  padding: 0.35rem 0.9rem;
-  font-size: 0.85rem;
-  font-family: inherit;
-  cursor: pointer;
-  transition: all var(--transition);
 }
-.pub-filter:hover { border-color: var(--accent); color: var(--accent); }
-.pub-filter.active {
-  background: var(--accent-soft);
-  border-color: var(--accent);
-  color: var(--accent);
-}
+.pub-filter.active { color: var(--accent); background: var(--accent-soft); }
 
 .pub-year-group { margin-bottom: 2rem; }
 .pub-year {
   font-family: var(--font-mono);
-  font-size: 0.85rem;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
   color: var(--text-subtle);
   margin-bottom: 0.75rem;
-  letter-spacing: 0.05em;
+  padding-left: 0.15rem;
 }
 
 .publication {
-  padding: 1rem 0;
-  border-bottom: 1px solid var(--border);
-  transition: transform var(--transition);
+  background: var(--slab);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-md);
+  padding: 1.35rem;
+  margin-bottom: 0.6rem;
+  transition: border-color var(--t), background var(--t);
 }
-.publication:hover { transform: translateX(4px); }
-.publication:last-child { border-bottom: none; }
+.publication:hover { border-color: var(--glass-edge); background: var(--glass-fill); }
 
-.pub-title {
-  font-size: 1rem;
-  margin: 0 0 0.25rem;
-  color: var(--text);
-  font-weight: 500;
-}
-.pub-authors {
-  font-size: 0.9rem;
-  color: var(--text-muted);
-  margin: 0 0 0.25rem;
-}
-.pub-authors .me { color: var(--accent); font-weight: 500; }
+.pub-title { font-size: 1.02rem; margin-bottom: 0.4rem; line-height: 1.35; }
+.pub-authors { font-size: 0.88rem; color: var(--text-muted); margin-bottom: 0.2rem; }
+.pub-authors .me { color: var(--accent); font-weight: 600; }
 .pub-venue {
-  font-size: 0.85rem;
-  color: var(--text-subtle);
-  font-style: italic;
-  margin: 0 0 0.5rem;
-}
-.pub-links {
-  display: flex;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-}
-.pub-link {
-  font-size: 0.8rem;
   font-family: var(--font-mono);
-  padding: 0.15rem 0.5rem;
-  border: 1px solid var(--border);
-  border-radius: 4px;
+  font-size: 0.72rem;
+  color: var(--text-subtle);
+  margin-bottom: 0.9rem;
+}
+
+.pub-links { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+.pub-link {
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.4rem 0.8rem;
+  border-radius: var(--r-capsule);
+  border: 1px solid var(--hairline);
+  background: transparent;
   color: var(--text-muted);
   cursor: pointer;
-  background: transparent;
-  transition: all var(--transition);
+  transition: color var(--t-fast), border-color var(--t-fast), background var(--t-fast);
 }
-.pub-link:hover { border-color: var(--accent); color: var(--accent); }
+.pub-link:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
 
 .pub-bibtex {
   display: none;
-  margin-top: 0.75rem;
-  padding: 0.75rem 1rem;
-  background: var(--bg-elevated);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
+  margin-top: 0.9rem;
+  padding: 1rem;
+  border-radius: var(--r-sm);
+  background: var(--ground-deep);
+  border: 1px solid var(--hairline);
   font-family: var(--font-mono);
-  font-size: 0.78rem;
+  font-size: 0.72rem;
+  line-height: 1.6;
   color: var(--text-muted);
-  white-space: pre;
   overflow-x: auto;
 }
 .pub-bibtex.open { display: block; }
 
+.pub-error { color: var(--text-muted); font-size: 0.95rem; }
+
 /* ============================================================
-   PROJECTS
+   9. PROJECTS
    ============================================================ */
 .projects-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 0.75rem;
 }
+
 .project-card {
-  padding: 1.25rem;
-  background: var(--bg-elevated);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
+  padding: 1.5rem;
+  background: var(--slab);
 }
-.project-card:hover {
-  transform: translateY(-3px);
-  border-color: var(--accent);
-  box-shadow: 0 6px 20px var(--accent-soft);
+.project-card:hover { background: var(--glass-fill-strong); }
+.project-card h3 { font-size: 1.08rem; margin-bottom: 0.55rem; }
+.project-card p {
+  font-size: 0.92rem;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
 }
-.project-card h3 { margin-bottom: 0.5rem; }
-.project-card p { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.75rem; }
-.project-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.project-tags { display: flex; flex-wrap: wrap; gap: 0.35rem; }
 .project-tags span {
-  font-size: 0.72rem;
   font-family: var(--font-mono);
-  padding: 0.15rem 0.5rem;
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+  padding: 0.25rem 0.6rem;
+  border-radius: var(--r-capsule);
   background: var(--accent-soft);
   color: var(--accent);
-  border-radius: 4px;
 }
 
 /* ============================================================
-   CONTACT + FOOTER
+   10. CONTACT
    ============================================================ */
-.contact-body { font-size: 1.05rem; }
-.contact-email { font-size: 1.25rem; font-family: var(--font-mono); margin: 1rem 0 1.5rem; }
-.contact-links { display: flex; gap: 1rem; flex-wrap: wrap; }
-.contact-links a { color: var(--text-muted); }
-.contact-links a:hover { color: var(--accent); }
+.contact-body { padding: 2rem; }
+.contact-body > p { color: var(--text-muted); }
+
+.contact-email {
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 4vw, 1.9rem);
+  letter-spacing: -0.02em;
+  margin: 0.75rem 0 1.5rem;
+}
+.contact-email a { color: var(--text); }
+.contact-email a:hover { color: var(--accent); }
+
+.contact-links { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.contact-links a {
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 0.55rem 1rem;
+  color: var(--text);
+}
 
 /* ============================================================
-   REVEAL ANIMATIONS
+   11. MOTION + RESPONSIVE
    ============================================================ */
 .reveal {
   opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 600ms ease, transform 600ms ease;
+  transform: translateY(18px);
+  transition: opacity var(--t-slow), transform var(--t-slow);
 }
-.reveal.visible {
-  opacity: 1;
-  transform: translateY(0);
+.reveal.visible { opacity: 1; transform: none; }
+
+@media (max-width: 1180px) {
+  .nav-rail { display: none; }
+  .nav-dock { display: flex; }
+  main { padding-bottom: 7rem; }
+}
+
+@media (max-width: 768px) {
+  body { font-size: 15px; }
+  main { padding: 0 1.25rem 7rem; }
+  .section { padding: 4.5rem 0 1rem; }
+  .hero { min-height: 92svh; padding: 5rem 0 3rem; }
+  .hero-canvas {
+    -webkit-mask-image: radial-gradient(85% 55% at 50% 45%, #000 25%, transparent 100%);
+    mask-image: radial-gradient(85% 55% at 50% 45%, #000 25%, transparent 100%);
+  }
+  .projects-grid, .skills-grid { grid-template-columns: 1fr; }
+  .section-body, .contact-body { padding: 1.35rem; }
+}
+
+@media (max-width: 560px) {
+  main { padding: 0 1rem 7rem; }
+  .hero-photo { width: 74px; height: 74px; margin-bottom: 1.25rem; }
+  .hero-tagline { margin-bottom: 1.75rem; }
+  .hero-links { gap: 0.45rem; }
+  .hero-links > a { padding: 0.55rem 0.9rem; font-size: 0.85rem; }
+  .hero-legend { gap: 0.85rem; font-size: 0.55rem; bottom: 1.5rem; }
+  .timeline-item { padding: 1.25rem 1.15rem 1.25rem 1.9rem; }
+  .timeline-item::before { left: 0.75rem; }
+  .nav-dock { gap: 0.5rem; padding: 0.5rem 0.7rem; }
+  .nav-dock a { width: 22px; }
+  .nav-dock .dock-label { min-width: 0; padding-left: 0.6rem; font-size: 0.55rem; }
+  .pub-bibtex { white-space: pre-wrap; word-break: break-word; font-size: 0.66rem; }
+}
+
+/* Touch: no hover lift, larger targets. */
+@media (hover: none) and (pointer: coarse) {
+  .theme-toggle { width: 48px; height: 48px; }
+  .glass-interactive:hover { transform: none; }
+  .timeline-item:hover, .publication:hover {
+    border-color: var(--hairline);
+    background: var(--slab);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .reveal { opacity: 1; transform: none; transition: none; }
-  * { animation: none !important; transition: none !important; }
-}
-
-/* ============================================================
-   RESPONSIVE
-   ============================================================ */
-@media (max-width: 1200px) {
-  .toc { display: none; }
-  .menu-btn { display: inline-flex; }
-}
-
-/* Tablet */
-@media (max-width: 768px) {
-  body { font-size: 15px; }
-  main { padding: 0 1.25rem; }
-  .section { padding: 4rem 0 2rem; }
-  .section-title { font-size: 1.4rem; margin-bottom: 1.5rem; }
-  .topbar { top: 0.75rem; right: 0.75rem; }
-  .hero { min-height: 85vh; padding: 2rem 0; }
-  .hero-tagline { font-size: 1.05rem; }
-  .projects-grid { grid-template-columns: 1fr; }
-  .skills-grid { grid-template-columns: 1fr; gap: 1.5rem; }
-}
-
-/* Mobile */
-@media (max-width: 560px) {
-  body { font-size: 15px; line-height: 1.6; }
-  main { padding: 0 1rem; }
-  .section { padding: 3rem 0 1.5rem; scroll-margin-top: 4rem; }
-  .hero { min-height: 75vh; padding: 3.5rem 0 1rem; }
-  .hero-photo { width: 90px; height: 90px; margin-bottom: 1rem; }
-  .hero-name { font-size: 2rem; }
-  .hero-tagline { font-size: 1rem; margin-bottom: 1.5rem; }
-  .hero-links { gap: 0.6rem 1rem; }
-  .hero-links a { font-size: 0.9rem; padding: 0.35rem 0; }
-
-  /* Tighter timeline on narrow screens */
-  .timeline { padding-left: 1.25rem; }
-  .timeline-item::before { left: -1.375rem; }
-  .timeline-meta { gap: 0.5rem; font-size: 0.78rem; }
-  .timeline-role { font-size: 1rem; }
-  .timeline-org { font-size: 0.9rem; }
-  .timeline-bullets li { font-size: 0.9rem; }
-
-  /* Publications: stack links, keep tap targets comfortable */
-  .pub-title { font-size: 0.98rem; }
-  .pub-links { gap: 0.4rem; }
-  .pub-link { padding: 0.3rem 0.6rem; font-size: 0.78rem; }
-
-  .project-card { padding: 1rem; }
-  .contact-email { font-size: 1rem; word-break: break-all; }
-
-  /* Allow the BibTeX block to wrap instead of forcing horizontal scroll
-     to the whole viewport. */
-  .pub-bibtex { white-space: pre-wrap; word-break: break-word; font-size: 0.72rem; }
-}
-
-/* Tap targets: slightly larger controls on touch devices */
-@media (hover: none) and (pointer: coarse) {
-  .theme-toggle, .menu-btn { width: 44px; height: 44px; }
-  .pub-link { min-height: 32px; display: inline-flex; align-items: center; }
-  .publication:hover { transform: none; }
-  .project-card:hover { transform: none; box-shadow: none; }
+  .reveal { opacity: 1; transform: none; }
+  .mesh { animation: none; }
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
 }
