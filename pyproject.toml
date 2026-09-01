@@ -1,5 +1,5 @@
 [project]
-name = "personal-webpage"
+name = "github.io"
 version = "0.1.0"
 description = "Onur Poyraz — personal webpage (static site). Python is only used to run a local dev server."
 readme = "README.md"
