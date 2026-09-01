@@ -15,10 +15,14 @@
 
 :root {
   /* ---- Mixture components (identical in both themes) ---- */
-  --c1: #2ee6c0;   /* mint      — component 1 */
-  --c2: #4c86ff;   /* cobalt    — component 2 */
-  --c3: #ef4e9b;   /* magenta   — component 3 */
-  --c4: #ffb03a;   /* amber     — component 4 */
+  /* component 1: mint / 2: cobalt / 3: magenta / 4: amber.
+     Keep the comments on their own line — WebKit returns a trailing
+     same-line comment as part of getPropertyValue(), which then fails
+     to parse in canvas addColorStop(). */
+  --c1: #2ee6c0;
+  --c2: #4c86ff;
+  --c3: #ef4e9b;
+  --c4: #ffb03a;
 
   /* ---- Type ---- */
   --font-display: 'Familjen Grotesk', 'Helvetica Neue', Helvetica, Arial, sans-serif;

@@ -59,14 +59,29 @@
     const PATHS = 7;               // posterior sample paths
     let w = 0, h = 0, t = 0, raf = null;
 
-    /** Read the live theme colors so the canvas re-tints with the page. */
+    /** Read the live theme colors so the canvas re-tints with the page.
+     *
+     *  WebKit hands back any trailing same-line comment as part of the
+     *  value ("#2ee6c0;  /* mint *\/"), and addColorStop throws a
+     *  SyntaxError on it, which kills the whole canvas. Strip anything
+     *  after the colour and fall back to a literal if the token is
+     *  missing or unparseable. */
+    const FALLBACK = { c1: '#2ee6c0', c2: '#4c86ff', c3: '#ef4e9b', c4: '#ffb03a' };
+
+    function readColor(styles, name) {
+      const raw = styles.getPropertyValue(name);
+      if (!raw) return FALLBACK[name.slice(2)];
+      const clean = raw.split('/*')[0].replace(/;/g, '').trim();
+      return /^(#|rgb|hsl|color\()/i.test(clean) ? clean : FALLBACK[name.slice(2)];
+    }
+
     function palette() {
       const s = getComputedStyle(document.documentElement);
       return {
-        c1: s.getPropertyValue('--c1').trim(),
-        c2: s.getPropertyValue('--c2').trim(),
-        c3: s.getPropertyValue('--c3').trim(),
-        c4: s.getPropertyValue('--c4').trim()
+        c1: readColor(s, '--c1'),
+        c2: readColor(s, '--c2'),
+        c3: readColor(s, '--c3'),
+        c4: readColor(s, '--c4')
       };
     }
     let pal = palette();
@@ -165,7 +180,14 @@
 
     function tick() {
       t += 0.006;
-      draw();
+      // One throwing frame must not take the whole animation down with it
+      // (a bad colour token used to kill the canvas outright in WebKit).
+      try {
+        draw();
+      } catch (e) {
+        stop();
+        return;
+      }
       raf = requestAnimationFrame(tick);
     }
 

@@ -171,10 +171,17 @@ ul, ol { list-style: none; }
   border-radius: inherit;
   -webkit-backdrop-filter: blur(0.5px) saturate(320%) brightness(var(--glass-rim-bright));
   backdrop-filter: blur(0.5px) saturate(320%) brightness(var(--glass-rim-bright));
+
+  /* Ring mask. Order matters: the `mask` shorthand resets
+     `-webkit-mask-composite`, so the legacy WebKit value has to be set
+     AFTER both shorthands or Safari falls back to source-over and paints
+     a filled rectangle instead of a ring. The two properties also take
+     different keywords — `xor` for the WebKit one, `exclude` for the
+     standard one — so both are needed. */
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
   mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   mask-composite: exclude;
+  -webkit-mask-composite: xor;
   pointer-events: none;
 }
 
