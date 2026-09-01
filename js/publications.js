@@ -52,7 +52,7 @@ function formatAuthors(authors) {
 /** Build a link button if a URL/DOI is present. */
 function linkButton(label, href) {
   if (!href) return '';
-  return `<a class="pub-link" href="${href}" target="_blank" rel="noopener">${label}</a>`;
+  return `<a class="pub-link glass-interactive" href="${href}" target="_blank" rel="noopener">${label}</a>`;
 }
 
 /** Format a venue string from entry fields. */
@@ -110,7 +110,7 @@ function renderPublications(entries) {
             <div class="pub-links">
               ${linkButton('Link', url)}
               ${e.fields.doi ? linkButton('DOI', `https://doi.org/${e.fields.doi}`) : ''}
-              <button class="pub-link" data-bibtex-toggle>BibTeX</button>
+              <button class="pub-link glass-interactive" data-bibtex-toggle>BibTeX</button>
             </div>
             <pre class="pub-bibtex">${bibtexBlock(e)}</pre>
           </article>
@@ -145,5 +145,5 @@ fetch(BIB_PATH)
   .then(src => renderPublications(parseBibtex(src)))
   .catch(err => {
     const el = document.getElementById('publications-list');
-    if (el) el.innerHTML = `<p style="color: var(--text-muted)">Could not load publications: ${err.message}</p>`;
+    if (el) el.innerHTML = `<p class="pub-error">Could not load publications — ${err.message}. If you opened index.html directly, run a local server instead.</p>`;
   });

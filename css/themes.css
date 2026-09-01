@@ -1,61 +1,165 @@
 /* ============================================================
-   THEME VARIABLES
-   Light and dark palettes. Edit these to change the site colors.
+   THEME TOKENS — "Liquid Glass"
+
+   Material rule for this site:
+     Glass is the CONTROL layer. Content is the GROUND.
+   Anything you can click, drag, or navigate with is glass —
+   it refracts, it catches light, it responds to the pointer.
+   Anything you read sits flat on the ground so it stays crisp.
+
+   Palette rationale: the accents are a categorical palette for a
+   mixture model — four components that must stay distinguishable
+   when overlaid at low alpha. They tint the hero's forecast fan
+   and every piece of glass that sits over it.
    ============================================================ */
 
 :root {
-  /* Accent — blue-purple (indigo). Same hue in both modes,
-     brightness adjusted per theme. */
-  --accent: #6366f1;
-  --accent-hover: #4f46e5;
-  --accent-soft: rgba(99, 102, 241, 0.12);
+  /* ---- Mixture components (identical in both themes) ---- */
+  --c1: #2ee6c0;   /* mint      — component 1 */
+  --c2: #4c86ff;   /* cobalt    — component 2 */
+  --c3: #ef4e9b;   /* magenta   — component 3 */
+  --c4: #ffb03a;   /* amber     — component 4 */
 
-  /* Light mode (default) */
-  --bg: #ffffff;
-  --bg-elevated: #fafafa;
-  --border: #e5e5e5;
-  --text: #1a1a1a;
-  --text-muted: #5a5a5a;
-  --text-subtle: #8a8a8a;
+  /* ---- Type ---- */
+  --font-display: 'Familjen Grotesk', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-body: 'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
 
-  /* Shared */
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  /* ---- Geometry ---- */
+  --glass-rim-w: 1.5px;
 
-  --radius: 8px;
-  --radius-lg: 12px;
-  --transition: 200ms ease;
-  --transition-slow: 400ms ease;
+  --r-capsule: 999px;
+  --r-lg: 26px;
+  --r-md: 18px;
+  --r-sm: 12px;
 
-  --max-width: 900px;
-  --toc-width: 200px;
+  --ease: cubic-bezier(0.32, 0.72, 0, 1);   /* Apple-ish overshoot-free glide */
+  --t-fast: 180ms var(--ease);
+  --t: 320ms var(--ease);
+  --t-slow: 700ms var(--ease);
+
+  --max-width: 940px;
+  --rail-width: 56px;
 }
 
+/* ============================================================
+   LIGHT — "frost": cool paper, glass reads as brighter than ground
+   ============================================================ */
+:root {
+  --ground: #e9edf5;
+  --ground-deep: #dbe2ef;
+
+  --text: #0d1220;
+  --text-muted: #4d5670;
+  --text-subtle: #7b8598;
+
+  --accent: #06977f;
+  --accent-hover: #047a67;
+  --accent-soft: rgba(6, 151, 127, 0.13);
+
+  /* Glass material */
+  /* Fill stays low so the backdrop's colour survives the blur — a heavy
+     fill is what turns glass into frosted plastic. */
+  --glass-fill: rgba(255, 255, 255, 0.22);
+  --glass-fill-strong: rgba(255, 255, 255, 0.36);
+  --glass-rim: rgba(255, 255, 255, 0.9);
+  --glass-rim-dim: rgba(13, 18, 32, 0.12);
+  --glass-spec: rgba(255, 255, 255, 0.55);
+  --glass-edge: rgba(13, 18, 32, 0.1);
+  --glass-shadow: 0 1px 2px rgba(13, 18, 32, 0.08), 0 12px 32px rgba(13, 18, 32, 0.12);
+  --glass-blur: 14px;
+  --glass-sat: 200%;
+  --glass-bright: 1.08;
+  --glass-rim-bright: 1.25;
+
+  /* Content slabs — a whisper of frost, no rim, so prose stays crisp */
+  --slab: rgba(255, 255, 255, 0.72);
+  --hairline: rgba(13, 18, 32, 0.1);
+
+  /* Ambient mesh behind everything */
+  --mesh-a: rgba(46, 230, 192, 0.5);
+  --mesh-b: rgba(76, 134, 255, 0.45);
+  --mesh-c: rgba(239, 78, 155, 0.34);
+  --mesh-d: rgba(255, 176, 58, 0.34);
+
+  --canvas-ink: rgba(13, 18, 32, 0.55);
+  color-scheme: light;
+}
+
+/* ============================================================
+   DARK — "night": glass reads as a lit film over deep ground
+   ============================================================ */
 [data-theme='dark'] {
-  --accent: #818cf8;
-  --accent-hover: #a5b4fc;
-  --accent-soft: rgba(129, 140, 248, 0.15);
+  --ground: #0b101c;
+  --ground-deep: #070b14;
 
-  --bg: #1e2128;
-  --bg-elevated: #272a33;
-  --border: #3a3e4a;
-  --text: #e8e8ea;
-  --text-muted: #b0b0b8;
-  --text-subtle: #7a7a85;
+  --text: #e9edf5;
+  --text-muted: #9aa6bd;
+  --text-subtle: #6a7691;
+
+  --accent: #2ee6c0;
+  --accent-hover: #6ef2d6;
+  --accent-soft: rgba(46, 230, 192, 0.15);
+
+  --glass-fill: rgba(255, 255, 255, 0.05);
+  --glass-fill-strong: rgba(255, 255, 255, 0.1);
+  --glass-rim: rgba(255, 255, 255, 0.4);
+  --glass-rim-dim: rgba(0, 0, 0, 0.35);
+  --glass-spec: rgba(255, 255, 255, 0.22);
+  --glass-edge: rgba(255, 255, 255, 0.1);
+  --glass-shadow: 0 1px 2px rgba(0, 0, 0, 0.5), 0 14px 40px rgba(0, 0, 0, 0.55);
+  --glass-blur: 14px;
+  --glass-sat: 240%;
+  --glass-bright: 1.5;
+  --glass-rim-bright: 2.1;
+
+  --slab: rgba(9, 13, 22, 0.68);
+  --hairline: rgba(255, 255, 255, 0.1);
+
+  --mesh-a: rgba(46, 230, 192, 0.3);
+  --mesh-b: rgba(76, 134, 255, 0.4);
+  --mesh-c: rgba(239, 78, 155, 0.26);
+  --mesh-d: rgba(255, 176, 58, 0.18);
+
+  --canvas-ink: rgba(233, 237, 245, 0.5);
+  color-scheme: dark;
 }
 
-/* Respect OS preference on first visit (overridden by localStorage via JS). */
+/* Respect the OS preference before JS runs. Mirrors [data-theme='dark']. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) {
-    --accent: #818cf8;
-    --accent-hover: #a5b4fc;
-    --accent-soft: rgba(129, 140, 248, 0.15);
+    --ground: #0b101c;
+    --ground-deep: #070b14;
 
-    --bg: #1e2128;
-    --bg-elevated: #272a33;
-    --border: #3a3e4a;
-    --text: #e8e8ea;
-    --text-muted: #b0b0b8;
-    --text-subtle: #7a7a85;
+    --text: #e9edf5;
+    --text-muted: #9aa6bd;
+    --text-subtle: #6a7691;
+
+    --accent: #2ee6c0;
+    --accent-hover: #6ef2d6;
+    --accent-soft: rgba(46, 230, 192, 0.15);
+
+    --glass-fill: rgba(255, 255, 255, 0.05);
+    --glass-fill-strong: rgba(255, 255, 255, 0.1);
+    --glass-rim: rgba(255, 255, 255, 0.4);
+    --glass-rim-dim: rgba(0, 0, 0, 0.35);
+    --glass-spec: rgba(255, 255, 255, 0.22);
+    --glass-edge: rgba(255, 255, 255, 0.1);
+    --glass-shadow: 0 1px 2px rgba(0, 0, 0, 0.5), 0 14px 40px rgba(0, 0, 0, 0.55);
+    --glass-blur: 14px;
+    --glass-sat: 240%;
+    --glass-bright: 1.5;
+    --glass-rim-bright: 2.1;
+
+    --slab: rgba(9, 13, 22, 0.68);
+    --hairline: rgba(255, 255, 255, 0.1);
+
+    --mesh-a: rgba(46, 230, 192, 0.3);
+    --mesh-b: rgba(76, 134, 255, 0.4);
+    --mesh-c: rgba(239, 78, 155, 0.26);
+    --mesh-d: rgba(255, 176, 58, 0.18);
+
+    --canvas-ink: rgba(233, 237, 245, 0.5);
+    color-scheme: dark;
   }
 }
