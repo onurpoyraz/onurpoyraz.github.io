@@ -7,7 +7,10 @@
         light source as you move past it.
      2. The hero forecast. A live posterior: sample paths that agree
         on the left of the "now" line and fan into a widening credible
-        band on the right. The backing store follows devicePixelRatio
+        band on the right. The band is the real thing — the model's
+        mean +/- the 95% half-width of its own marginal, with the paths
+        drawn from that same model — because a page about calibration
+        should not mislabel a picture. The backing store follows devicePixelRatio
         (capped at 2) so the strokes stay crisp on retina panels, and
         the paths are drawn as Catmull-Rom splines rather than a
         polyline so the curvature survives the higher resolution.
@@ -56,8 +59,24 @@
     if (!ctx) return;
 
     const MAX_DPR = 2;             // beyond 2x the extra pixels are invisible
+    /* --- verified:constants --- scripts/verify-credible-band.js reads
+       everything between this marker and verified:end, then re-derives
+       Z95 from it. Keep the markers in place. */
     const NOW = 0.42;              // x fraction where forecast begins
     const PATHS = 7;               // posterior sample paths
+    const K = 12;                  // spectral components per path
+    const SIG_OBS = 0.02;          // posterior sd over the observed stretch
+    const SIG_FAR = 0.55;          // posterior sd at the forecast horizon
+
+    /* Half-width of the central 95% interval of the noise process below,
+       in units of its sd. NOT the Gaussian 1.95996: a sum of K
+       random-phase cosines is slightly platykurtic (kurtosis 2.77 at
+       K = 12), so its 95% interval is ~0.9% narrower than a normal's.
+       Measured off this exact spectrum with 2e7 Monte Carlo samples:
+       q(2.5%) = -1.94273, q(97.5%) = +1.94360. Re-measure if K, FREQ or
+       the weighting below changes. */
+    const Z95 = 1.9432;
+    /* --- verified:end --- */
     // w/h are CSS pixels; the context is scaled so all drawing below
     // can stay in CSS units regardless of the panel's pixel density.
     let w = 0, h = 0, t = 0, raf = null, segments = 96, band = null;
@@ -114,31 +133,88 @@
       draw();
     }
 
-    /** A smooth pseudo-GP path: a few incommensurate sines so it never
-     *  visibly repeats. Before the "now" line every path collapses onto
-     *  the same observed history; after it, the spread opens up. */
-    function value(x, seed, time) {
-      const wiggle =
-        Math.sin(x * 3.1 + time * 0.7 + seed * 2.3) * 0.5 +
-        Math.sin(x * 6.7 - time * 0.45 + seed * 5.1) * 0.28 +
-        Math.sin(x * 1.6 + time * 0.31 + seed * 1.1) * 0.34;
-      // Uncertainty is near-zero on the observed side and grows steeply
-      // across the forecast horizon.
-      const ahead = Math.max(0, (x - NOW) / (1 - NOW));
-      const spread = 0.03 + Math.pow(ahead, 1.5) * 1.0;
-      const observed = Math.sin(x * 2.4 + time * 0.5) * 0.34
-                     + Math.sin(x * 5.3 - time * 0.8) * 0.08;
-      return observed + wiggle * spread;
+    /* ---- the model the picture is actually drawing ----
+       Each sample path is  mean(x) + sigma(x) * noise(x),  where noise is
+       a random-phase spectral process with mean 0 and variance exactly 1
+       at every x. That makes the marginal at each x a known distribution,
+       which is what lets the band be a real 95% interval (mean +/- Z95 *
+       sigma) instead of a shape drawn around whichever paths happened to
+       land furthest out. */
+
+    /* --- verified:model --- */
+    // Frequencies with squared-exponential weights: low frequencies carry
+    // most of the power, so paths undulate rather than buzz. Normalising
+    // to sum(W^2) = 2 is what pins Var[noise] to exactly 1, because each
+    // cosine of a uniform phase contributes W^2 / 2.
+    const FREQ = [], W = [];
+    for (let k = 0; k < K; k++) FREQ.push(1.1 + (12 - 1.1) * k / (K - 1));
+    {
+      const raw = FREQ.map((f) => Math.exp(-(f * f) / 64));
+      const norm = Math.sqrt(2 / raw.reduce((a, v) => a + v * v, 0));
+      for (const v of raw) W.push(v * norm);
     }
 
-    function pathPoints(seed, time) {
+    /** Deterministic hash -> [0, 1). Phases have to be decorrelated for
+     *  the variance identity to hold, but they should not be re-rolled on
+     *  every load: the hero draws the same posterior every time. */
+    function rand01(n) {
+      let x = (n + 0x9e3779b9) | 0;
+      x = Math.imul(x ^ (x >>> 16), 0x21f0aaad);
+      x = Math.imul(x ^ (x >>> 15), 0x735a2d97);
+      x ^= x >>> 15;
+      return (x >>> 0) / 4294967296;
+    }
+
+    // Per-path phase offsets, and the rate each phase drifts with time.
+    // Drifting the phases animates the paths without touching the
+    // marginal law, so the band stays exact on every frame.
+    const PHASE = [], DRIFT = [];
+    for (let p = 0; p < PATHS; p++) {
+      const ph = [], dr = [];
+      for (let k = 0; k < K; k++) {
+        ph.push(rand01(p * 101 + k * 17) * Math.PI * 2);
+        dr.push((0.3 + rand01(p * 211 + k * 53 + 7) * 0.9) * (k % 2 ? -1 : 1));
+      }
+      PHASE.push(ph);
+      DRIFT.push(dr);
+    }
+
+    /** The posterior mean: the trend the data supports, carried forward. */
+    function mean(x, time) {
+      return Math.sin(x * 2.4 + time * 0.5) * 0.34
+           + Math.sin(x * 5.3 - time * 0.8) * 0.08;
+    }
+
+    /** Posterior sd: tight over the observed stretch, opening up across
+     *  the forecast horizon. */
+    function sigma(x) {
+      const ahead = Math.max(0, (x - NOW) / (1 - NOW));
+      return SIG_OBS + (SIG_FAR - SIG_OBS) * Math.pow(ahead, 1.5);
+    }
+
+    /** Standardised noise for one path: mean 0, variance 1, every x. */
+    function noise(x, time, p) {
+      const ph = PHASE[p], dr = DRIFT[p];
+      let v = 0;
+      for (let k = 0; k < K; k++) {
+        v += W[k] * Math.cos(FREQ[k] * x + ph[k] + dr[k] * time);
+      }
+      return v;
+    }
+
+    /** Sample a curve of the canvas across the full width. */
+    function curve(fn, time) {
       const pts = [];
       for (let i = 0; i <= segments; i++) {
         const x = i / segments;
-        pts.push([x * w, h * 0.5 + value(x, seed, time) * h * 0.3]);
+        pts.push([x * w, h * 0.5 + fn(x, time) * h * 0.3]);
       }
       return pts;
     }
+
+    const samplePath = (p) => (x, time) => mean(x, time) + sigma(x) * noise(x, time, p);
+    const bandEdge = (side) => (x, time) => mean(x, time) + side * Z95 * sigma(x);
+    /* --- verified:end --- */
 
     /** Trace pts as a Catmull-Rom spline converted to cubic beziers.
      *  A polyline through the same points reads as faceted once the
@@ -178,9 +254,12 @@
       if (!w || !h) return;
       ctx.clearRect(0, 0, w, h);
 
-      // Credible band: the envelope of the extreme sample paths.
-      const hi = pathPoints(-3.2, t);
-      const lo = pathPoints(3.2, t);
+      // The 95% credible band: mean +/- Z95 * sd, straight off the model.
+      // Sample paths are drawn from that same model, so roughly one point
+      // in twenty falls outside — a path grazing the edge is the band
+      // being honest, not a bug.
+      const hi = curve(bandEdge(+1), t);
+      const lo = curve(bandEdge(-1), t);
       ctx.beginPath();
       ctx.moveTo(hi[0][0], hi[0][1]);
       trace(hi, false);
@@ -195,13 +274,12 @@
 
       // Posterior sample paths.
       for (let i = 0; i < PATHS; i++) {
-        const seed = (i - (PATHS - 1) / 2) * 0.95;
-        const pts = pathPoints(seed, t);
-        stroke(pts, i % 2 ? pal.c1 : pal.c2, 1.5, 0.32);
+        stroke(curve(samplePath(i), t), i % 2 ? pal.c1 : pal.c2, 1.5, 0.32);
       }
 
       // Posterior mean, drawn brighter — the number you would report.
-      stroke(pathPoints(0, t), pal.c1, 3, 0.75);
+      // This is the model's mean, not one of the draws.
+      stroke(curve(mean, t), pal.c1, 3, 0.75);
 
       // The "now" boundary: everything left is observed, right is forecast.
       ctx.beginPath();

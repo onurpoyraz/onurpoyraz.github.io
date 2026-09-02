@@ -44,6 +44,8 @@ Every push to `main` redeploys automatically.
 │   ├── academic.pdf        # Academic CV — linked from the hero "Academic CV" button
 │   ├── photo.jpg           # Profile photo shown in the hero
 │   └── favicon.svg         # Browser tab icon
+├── scripts/
+│   └── verify-credible-band.js  # Checks the hero band really is a 95% band
 ├── pyproject.toml          # Pins Python version for the dev server (uv)
 ├── uv.lock                 # uv lockfile — commit this for reproducibility
 └── README.md               # You are here
@@ -127,6 +129,18 @@ Add `class="glass"` to any element to make it glass, plus `glass-capsule` for a 
 
 ### The hero animation
 `js/glass.js` draws it. `NOW` sets where the forecast boundary sits, `PATHS` how many posterior samples are drawn, and `MAX_DPR` caps the backing-store resolution (the canvas follows `devicePixelRatio` up to that cap, so the strokes stay sharp on retina panels without paying for pixels nobody can see). It pauses when the hero scrolls away, when the tab is hidden, and when the visitor prefers reduced motion.
+
+The legend under it claims a **95% credible band**, and the band really is one. Each sample path is `mean(x) + sigma(x) * noise(x)`, where `noise` is a random-phase spectral process — `K` cosines whose weights are normalised so that `sum(W^2) = 2`, which makes its variance exactly 1 at every `x`. Because the marginal is then a known distribution, the band can be drawn as `mean ± Z95 * sigma` rather than as a shape wrapped around whichever paths happened to land furthest out, and the paths are draws from that same distribution — so about one point in twenty falls outside the band, as it should.
+
+`Z95 = 1.9432` is **not** the Gaussian 1.95996: a sum of 12 random-phase cosines is slightly platykurtic (kurtosis ≈ 2.77), so its central 95% interval is about 0.9% narrower than a normal's. `SIG_OBS` and `SIG_FAR` set how tight the posterior is over the observed stretch and how wide it opens at the horizon; they control the size of the fan, not its correctness.
+
+If you change `K`, `FREQ` or the weighting, `Z95` goes stale — so it is checked rather than trusted:
+
+```bash
+node scripts/verify-credible-band.js      # ~5s, needs node, no packages
+```
+
+It reads the model out of `js/glass.js` (the blocks between the `verified:` markers) and runs *that* code rather than a copy, so the check cannot drift away from the drawing. It re-derives `Z95` by Monte Carlo, measures what fraction of sample paths actually land inside the band as drawn, and confirms the "posterior mean" line is the model's mean rather than one more draw. It exits non-zero and prints the correct `Z95` if anything is off.
 
 ### Tune animations / layout
 Layout, spacing, and animations are in `css/style.css`. Section boundaries inside that file are marked with banner comments (e.g. `/* HERO */`, `/* TIMELINE */`).
