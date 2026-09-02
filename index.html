@@ -121,9 +121,16 @@
     <!-- ========== EXPERIENCE ========== -->
     <section id="experience" class="section">
       <h2 class="section-title reveal">Experience</h2>
+
+      <!-- Overlap map. Built by js/experience.js from the data-start /
+           data-end / data-kind / data-short attributes on the cards below,
+           so the cards stay the only place a role is ever written down.
+           Empty (and hidden) if the script does not run. -->
+      <figure class="exp-chart reveal" id="experience-chart" hidden></figure>
+
       <ol class="timeline">
 
-        <li class="timeline-item reveal">
+        <li class="timeline-item reveal" id="exp-vaalia" data-start="2025-03" data-kind="industry" data-short="Vaalia Health">
           <div class="timeline-meta">
             <span class="timeline-date">Mar 2025 – Present</span>
             <span class="timeline-loc">Espoo, Finland</span>
@@ -138,7 +145,7 @@
           </ul>
         </li>
 
-        <li class="timeline-item reveal">
+        <li class="timeline-item reveal" id="exp-nokia" data-start="2024-07" data-end="2024-12" data-kind="research" data-short="Aalto–Nokia">
           <div class="timeline-meta">
             <span class="timeline-date">Jul 2024 – Dec 2024</span>
             <span class="timeline-loc">Espoo, Finland</span>
@@ -152,7 +159,7 @@
           </ul>
         </li>
 
-        <li class="timeline-item reveal">
+        <li class="timeline-item reveal" id="exp-phd" data-start="2019-08" data-end="2024-12" data-kind="research" data-short="Aalto Ph.D.">
           <div class="timeline-meta">
             <span class="timeline-date">Aug 2019 – Dec 2024</span>
             <span class="timeline-loc">Espoo, Finland</span>
@@ -167,7 +174,7 @@
           </ul>
         </li>
 
-        <li class="timeline-item reveal">
+        <li class="timeline-item reveal" id="exp-bkm" data-start="2018-06" data-end="2019-06" data-kind="industry" data-short="BKM">
           <div class="timeline-meta">
             <span class="timeline-date">Jun 2018 – Jun 2019</span>
             <span class="timeline-loc">İstanbul, Turkey</span>
@@ -180,7 +187,7 @@
           </ul>
         </li>
 
-        <li class="timeline-item reveal">
+        <li class="timeline-item reveal" id="exp-deepc" data-start="2018-06" data-end="2018-12" data-kind="industry" data-short="DeepC">
           <div class="timeline-meta">
             <span class="timeline-date">Jun 2018 – Dec 2018</span>
             <span class="timeline-loc">İstanbul, Turkey</span>
@@ -193,7 +200,7 @@
           </ul>
         </li>
 
-        <li class="timeline-item reveal">
+        <li class="timeline-item reveal" id="exp-borusan" data-start="2017-02" data-end="2018-04" data-kind="research" data-short="Borusan R&amp;D">
           <div class="timeline-meta">
             <span class="timeline-date">Feb 2017 – Apr 2018</span>
             <span class="timeline-loc">İstanbul, Turkey</span>
@@ -446,6 +453,7 @@
   </main>
 
   <script src="js/glass.js?v=2"></script>
+  <script src="js/experience.js?v=1"></script>
   <script src="js/publications.js?v=3"></script>
   <script src="js/main.js?v=2"></script>
 </body>

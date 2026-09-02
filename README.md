@@ -36,6 +36,7 @@ Every push to `main` redeploys automatically.
 │   └── style.css           # Layout, typography, components, animations
 ├── js/
 │   ├── glass.js            # Glass specular tracking + the hero forecast canvas
+│   ├── experience.js       # Builds the overlap map from the Experience cards
 │   ├── main.js             # Theme toggle, scroll-spy, reveal animations
 │   └── publications.js     # Parses the inline BibTeX block, renders the list
 ├── assets/
@@ -57,6 +58,19 @@ Edit the `<section id="about">` block in `index.html`.
 
 ### Add or change a job in Experience
 Edit `<section id="experience">`. Each job is one `<li class="timeline-item">` block. Copy an existing one and update the dates, role, org, and bullet points.
+
+Above the cards sits an **overlap map** — a shared time axis with one lane per role, so concurrent work (the Aalto–Nokia workstream inside the Ph.D., the BKM engagement alongside DeepC) reads as concurrent instead of as a sequence. `js/experience.js` builds it from the cards themselves, so a new job appears in it automatically as long as the `<li>` carries these attributes:
+
+```html
+<li class="timeline-item reveal"
+    id="exp-something"        <!-- anchor the chart bar links to; must be unique -->
+    data-start="2025-03"      <!-- YYYY-MM, inclusive -->
+    data-end="2025-11"        <!-- YYYY-MM, inclusive; OMIT ENTIRELY if ongoing -->
+    data-kind="industry"      <!-- industry | research — picks the bar colour -->
+    data-short="Some Org">    <!-- short lane label; falls back to the org line -->
+```
+
+A role with no `data-end` is drawn as ongoing: its bar runs to today and fades out rather than stopping, and "today" is computed at page load, so nothing needs updating as time passes. A card without `data-start` is simply left out of the chart. The chart hides itself if the script does not run.
 
 ### Add or change an education entry
 Same pattern as Experience, inside `<section id="education">`.
@@ -107,6 +121,9 @@ Edit `css/themes.css`. The `:root` block defines light mode; the `[data-theme='d
 
 ### The glass material
 Add `class="glass"` to any element to make it glass, plus `glass-capsule` for a pill shape and `glass-interactive` for the hover lift. The rule the design follows: **glass is the control layer, content is the ground** — things you click are glass, things you read sit on a plain frosted slab so the text stays crisp.
+
+### The Experience overlap map
+`js/experience.js` reads the cards and draws the lanes; the styles are the `.exp-*` rules in `css/style.css`. Bar colours come from `--c1` (research) and `--c2` (industry), the dashed "today" marker from `--c4` — the same tokens the hero canvas uses, so re-theming moves both together. `--exp-ink` in `css/themes.css` sets how solid the bars are; the light theme needs more of it than the dark one to hold contrast against a pale slab. Hovering a lane lights its card and vice versa.
 
 ### The hero animation
 `js/glass.js` draws it. `NOW` sets where the forecast boundary sits, `PATHS` how many posterior samples are drawn, and `MAX_DPR` caps the backing-store resolution (the canvas follows `devicePixelRatio` up to that cap, so the strokes stay sharp on retina panels without paying for pixels nobody can see). It pauses when the hero scrolls away, when the tab is hidden, and when the visitor prefers reduced motion.
