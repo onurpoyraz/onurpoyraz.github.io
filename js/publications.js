@@ -1,6 +1,12 @@
 /* ============================================================
    publications.js
-   Fetches publications.bib, parses it, and renders grouped-by-year.
+   Reads the inline BibTeX block from the page, parses it, and
+   renders it grouped by year.
+
+   The BibTeX lives in index.html rather than in a fetched .bib
+   file: fetch() cannot read a sibling file over file://, so the
+   old setup only worked behind a web server. Reading it out of
+   the DOM means the page also works opened straight from disk.
 
    The parser is intentionally minimal — it handles the subset of
    BibTeX we use (entry type, key, and {...}-delimited fields).
@@ -8,13 +14,13 @@
    @string, @preamble, etc.), extend parseBibtex accordingly.
    ============================================================ */
 
-const BIB_PATH = 'assets/publications.bib';
+const BIB_ELEMENT = 'publications-bib';
 const ME = 'Poyraz, Onur';
 
 /** Parse a .bib string into an array of entry objects. */
 function parseBibtex(src) {
   const entries = [];
-  const re = /@(\w+)\s*\{\s*([^,]+),([\s\S]*?)\n\}/g;
+  const re = /@(\w+)\s*\{\s*([^,]+),([\s\S]*?)\n[ \t]*\}/g;
   let m;
   while ((m = re.exec(src)) !== null) {
     const type = m[1].toLowerCase();
@@ -140,10 +146,10 @@ function renderPublications(entries) {
   });
 }
 
-fetch(BIB_PATH)
-  .then(r => r.text())
-  .then(src => renderPublications(parseBibtex(src)))
-  .catch(err => {
-    const el = document.getElementById('publications-list');
-    if (el) el.innerHTML = `<p class="pub-error">Could not load publications — ${err.message}. If you opened index.html directly, run a local server instead.</p>`;
-  });
+const bib = document.getElementById(BIB_ELEMENT);
+if (bib) {
+  renderPublications(parseBibtex(bib.textContent));
+} else {
+  const el = document.getElementById('publications-list');
+  if (el) el.innerHTML = `<p class="pub-error">Could not load publications — the #${BIB_ELEMENT} block is missing from the page.</p>`;
+}

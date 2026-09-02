@@ -311,6 +311,78 @@
         <button class="pub-filter glass glass-capsule glass-interactive" data-filter="inproceedings">Conference</button>
       </div>
       <div id="publications-list" class="publications reveal"></div>
+
+      <!-- Source of truth for the list above: publications.js parses this
+           block and renders it grouped by year. It lives inline rather than
+           in a fetched .bib file because browsers refuse to read a sibling
+           file over file://, which broke the page when opened straight from
+           disk. Entries are kept flush-left and in plain BibTeX so they can
+           be pasted to and from a .bib without reformatting. To add a paper,
+           append an @article or @inproceedings entry here. -->
+      <script type="application/x-bibtex" id="publications-bib">
+@article{poyraz2025glucose,
+  title   = {Computational modeling enables individual assessment of postprandial glucose and insulin responses after bariatric surgery},
+  author  = {Poyraz, Onur and Heinonen, Sini and others},
+  journal = {Communications Medicine},
+  volume  = {5},
+  number  = {1},
+  pages   = {434},
+  year    = {2025},
+  doi     = {10.1038/s43856-025-01155-4},
+  url     = {https://doi.org/10.1038/s43856-025-01155-4}
+}
+
+@article{poyraz2022mrsa,
+  title   = {Modelling MRSA decolonization: interactions between body sites and the impact of site-specific clearance},
+  author  = {Poyraz, Onur and Sater, Mohamad R. A. and others},
+  journal = {Journal of the Royal Society Interface},
+  volume  = {19},
+  number  = {191},
+  pages   = {20210916},
+  year    = {2022},
+  doi     = {10.1098/rsif.2021.0916},
+  url     = {https://doi.org/10.1098/rsif.2021.0916}
+}
+
+@inproceedings{haitsiukevich2024diffusion,
+  title     = {Diffusion Models as Probabilistic Neural Operators for Recovering Unobserved States of Dynamical Systems},
+  author    = {Haitsiukevich, Katsiaryna and Poyraz, Onur and Ilin, Alexander and Marttinen, Pekka},
+  booktitle = {2024 IEEE 34th International Workshop on Machine Learning for Signal Processing (MLSP)},
+  pages     = {1--6},
+  year      = {2024},
+  doi       = {10.1109/MLSP58920.2024.10734762},
+  url       = {https://doi.org/10.1109/MLSP58920.2024.10734762}
+}
+
+@inproceedings{poyraz2023mixture,
+  title     = {Mixture of Coupled HMMs for Robust Modeling of Multivariate Healthcare Time Series},
+  author    = {Poyraz, Onur and Marttinen, Pekka},
+  booktitle = {Proceedings of the 3rd Machine Learning for Health Symposium},
+  volume    = {225},
+  series    = {PMLR},
+  pages     = {461--479},
+  year      = {2023},
+  url       = {https://proceedings.mlr.press/v225/}
+}
+
+@inproceedings{poyraz2020merchant,
+  title     = {Merchant Risk Scoring},
+  author    = {Poyraz, Onur and Say, Cem and Cemgil, Ali Taylan},
+  booktitle = {Signal Processing and Communications Applications Conference (SIU), 2020 28th},
+  pages     = {1--4},
+  year      = {2020},
+  organization = {IEEE}
+}
+
+@inproceedings{poyraz2018anomaly,
+  title     = {Anomaly Detection on Wind Turbines},
+  author    = {Poyraz, Onur and Kurutmaz, Burak and others},
+  booktitle = {Signal Processing and Communications Applications Conference (SIU), 2018 26th},
+  pages     = {1--4},
+  year      = {2018},
+  organization = {IEEE}
+}
+      </script>
     </section>
 
     <!-- ========== PROJECTS ========== -->
@@ -374,7 +446,7 @@
   </main>
 
   <script src="js/glass.js?v=2"></script>
-  <script src="js/publications.js?v=2"></script>
+  <script src="js/publications.js?v=3"></script>
   <script src="js/main.js?v=2"></script>
 </body>
 </html>
