@@ -8,9 +8,9 @@
      2. The hero forecast. A live posterior: sample paths that agree
         on the left of the "now" line and fan into a widening credible
         band on the right. The band is the real thing — the model's
-        mean +/- the 95% half-width of its own marginal, with the paths
-        drawn from that same model — because a page about calibration
-        should not mislabel a picture. The backing store follows devicePixelRatio
+        mean +/- the measured half-width of its own marginal at LEVEL,
+        with the paths drawn from that same model — because a page about
+        calibration should not mislabel a picture. The backing store follows devicePixelRatio
         (capped at 2) so the strokes stay crisp on retina panels, and
         the paths are drawn as Catmull-Rom splines rather than a
         polyline so the curvature survives the higher resolution.
@@ -61,21 +61,30 @@
     const MAX_DPR = 2;             // beyond 2x the extra pixels are invisible
     /* --- verified:constants --- scripts/verify-credible-band.js reads
        everything between this marker and verified:end, then re-derives
-       Z95 from it. Keep the markers in place. */
+       Z from it. Keep the markers in place. */
     const NOW = 0.42;              // x fraction where forecast begins
     const PATHS = 7;               // posterior sample paths
     const K = 12;                  // spectral components per path
     const SIG_OBS = 0.02;          // posterior sd over the observed stretch
     const SIG_FAR = 0.55;          // posterior sd at the forecast horizon
 
-    /* Half-width of the central 95% interval of the noise process below,
-       in units of its sd. NOT the Gaussian 1.95996: a sum of K
-       random-phase cosines is slightly platykurtic (kurtosis 2.77 at
-       K = 12), so its 95% interval is ~0.9% narrower than a normal's.
-       Measured off this exact spectrum with 2e7 Monte Carlo samples:
-       q(2.5%) = -1.94273, q(97.5%) = +1.94360. Re-measure if K, FREQ or
-       the weighting below changes. */
-    const Z95 = 1.9432;
+    /* The credible level the band advertises, and the half-width of the
+       noise process's central interval at that level, in units of its sd.
+
+       Z is measured, never assumed. The process is not Gaussian — a sum
+       of K random-phase cosines is platykurtic (kurtosis 2.77 at K = 12),
+       short in the tails and full in the shoulders — and the sign of the
+       error against a normal flips with the level: at 95% the true
+       interval is 0.86% narrower than 1.95996, at 90% it is 0.30% wider
+       than 1.64485. Measured off this exact spectrum with 3e7 Monte Carlo
+       samples: q(5%) = -1.64956, q(95%) = +1.64978.
+
+       Changing LEVEL, K, FREQ or the weighting invalidates Z. Run
+       scripts/verify-credible-band.js; it prints the value to paste here,
+       and it also checks that the hero legend still names the right
+       number. */
+    const LEVEL = 0.90;
+    const Z = 1.6498;
     /* --- verified:end --- */
     // w/h are CSS pixels; the context is scaled so all drawing below
     // can stay in CSS units regardless of the panel's pixel density.
@@ -137,7 +146,7 @@
        Each sample path is  mean(x) + sigma(x) * noise(x),  where noise is
        a random-phase spectral process with mean 0 and variance exactly 1
        at every x. That makes the marginal at each x a known distribution,
-       which is what lets the band be a real 95% interval (mean +/- Z95 *
+       which is what lets the band be a real LEVEL interval (mean +/- Z *
        sigma) instead of a shape drawn around whichever paths happened to
        land furthest out. */
 
@@ -213,7 +222,7 @@
     }
 
     const samplePath = (p) => (x, time) => mean(x, time) + sigma(x) * noise(x, time, p);
-    const bandEdge = (side) => (x, time) => mean(x, time) + side * Z95 * sigma(x);
+    const bandEdge = (side) => (x, time) => mean(x, time) + side * Z * sigma(x);
     /* --- verified:end --- */
 
     /** Trace pts as a Catmull-Rom spline converted to cubic beziers.
@@ -254,10 +263,10 @@
       if (!w || !h) return;
       ctx.clearRect(0, 0, w, h);
 
-      // The 95% credible band: mean +/- Z95 * sd, straight off the model.
-      // Sample paths are drawn from that same model, so roughly one point
-      // in twenty falls outside — a path grazing the edge is the band
-      // being honest, not a bug.
+      // The credible band: mean +/- Z * sd, straight off the model.
+      // Sample paths are drawn from that same model, so one point in ten
+      // falls outside at LEVEL = 0.9 — a path grazing the edge is the
+      // band being honest, not a bug.
       const hi = curve(bandEdge(+1), t);
       const lo = curve(bandEdge(-1), t);
       ctx.beginPath();

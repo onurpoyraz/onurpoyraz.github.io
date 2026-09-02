@@ -2,11 +2,11 @@
 /* ============================================================
    verify-credible-band.js
 
-   The hero legend claims a 95% credible band. This checks that the
-   claim is true, and tells you what Z95 should be if you have changed
-   the process.
+   The hero legend names a credible level. This checks that the band
+   drawn under that label really is one, and tells you what Z should be
+   if you have changed the process or the level.
 
-     node scripts/verify-credible-band.js            # ~5s
+     node scripts/verify-credible-band.js            # ~6s
      node scripts/verify-credible-band.js --samples 20000000
 
    It does not re-implement the model. It reads js/glass.js, pulls out
@@ -19,14 +19,17 @@
        whole construction rests on this: it is what makes the marginal
        at each x a known distribution, which is what lets the band be
        analytic instead of a shape traced around the outermost paths.
-     - The 95% interval of that marginal, by Monte Carlo, against the
-       Z95 the page ships. The process is NOT Gaussian — a sum of K
-       random-phase cosines is platykurtic — so this is deliberately
-       not 1.95996.
+     - The central LEVEL interval of that marginal, by Monte Carlo,
+       against the Z the page ships. The process is NOT Gaussian — a sum
+       of K random-phase cosines is platykurtic — and the sign of the
+       error against a normal flips with the level, so Z has to be
+       measured at whatever level the legend claims.
      - Actual coverage: the fraction of sample-path points that land
        inside the band as drawn, which is the claim a visitor reads.
      - That the line labelled "posterior mean" is the model's mean and
        not just one more draw.
+     - That the hero legend in index.html names the same level the model
+       is drawing. A correct band under a wrong label is still a lie.
 
    Exits non-zero if any of them is off, so it can gate a commit.
 
@@ -39,13 +42,15 @@
 const fs = require('fs');
 const path = require('path');
 
-const GLASS = path.join(__dirname, '..', 'js', 'glass.js');
+const ROOT = path.join(__dirname, '..');
+const GLASS = path.join(ROOT, 'js', 'glass.js');
+const INDEX = path.join(ROOT, 'index.html');
 
 // Tolerances. Monte Carlo noise at the default sample count is well
 // under these; anything larger means the model actually changed.
 const TOL_VAR = 0.02;      // |Var[noise] - 1|
-const TOL_Z = 0.004;       // |shipped Z95 - measured|
-const TOL_COVER = 0.15;    // |coverage - 95| in percentage points
+const TOL_Z = 0.004;       // |shipped Z - measured|
+const TOL_COVER = 0.15;    // |coverage - LEVEL| in percentage points
 
 const argv = process.argv.slice(2);
 const argOf = (name, fallback) => {
@@ -76,7 +81,7 @@ const model = block(src, 'verified:model');
 // Carlo can draw far more paths than the seven the page renders.
 const body = consts.replace(/const PATHS\s*=\s*\d+;/, 'const PATHS = PATHS_MC;') +
   '\n' + model + '\n' +
-  'return { NOW, PATHS, K, SIG_OBS, SIG_FAR, Z95, W, FREQ, mean, sigma, noise, samplePath, bandEdge };';
+  'return { NOW, PATHS, K, SIG_OBS, SIG_FAR, LEVEL, Z, W, FREQ, mean, sigma, noise, samplePath, bandEdge };';
 
 let m;
 try {
@@ -88,8 +93,11 @@ try {
 
 const fail = [];
 const mark = (ok) => (ok ? 'ok  ' : 'FAIL');
+const pct = (m.LEVEL * 100).toFixed((m.LEVEL * 100) % 1 ? 1 : 0);
+const LO = (1 - m.LEVEL) / 2;
+const HI = (1 + m.LEVEL) / 2;
 
-console.log(`model: K=${m.K}  Z95=${m.Z95}  sigma ${m.SIG_OBS} -> ${m.SIG_FAR}  now=${m.NOW}`);
+console.log(`model: level=${pct}%  Z=${m.Z}  K=${m.K}  sigma ${m.SIG_OBS} -> ${m.SIG_FAR}  now=${m.NOW}`);
 console.log(`monte carlo: ${SAMPLES.toLocaleString()} samples, ${PATHS_MC.toLocaleString()} paths\n`);
 
 /* ---------- 1. the variance identity ---------- */
@@ -110,38 +118,53 @@ for (const x of [0, 0.25, 0.5, 0.75, 1]) {
   if (!ok) fail.push(`Var[noise(${x})] = ${va.toFixed(4)}, expected 1`);
 }
 
-/* ---------- 2. the marginal's own 95% interval ---------- */
+/* ---------- 2. the marginal's own interval at LEVEL ---------- */
 
-console.log('\n3. marginal of the noise process');
-const s = new Float64Array(SAMPLES);
+console.log(`\n3. marginal of the noise process, central ${pct}% interval`);
+
+const drawn = new Float64Array(SAMPLES);
 for (let i = 0; i < SAMPLES; i++) {
   let v = 0;
   for (let k = 0; k < m.K; k++) v += m.W[k] * Math.cos(Math.random() * 2 * Math.PI);
-  s[i] = v;
+  drawn[i] = v;
 }
-s.sort();
+drawn.sort();
+
 let mu = 0, m2 = 0, m4 = 0;
-for (const v of s) { mu += v; m2 += v * v; }
+for (const v of drawn) { mu += v; m2 += v * v; }
 mu /= SAMPLES;
 m2 = m2 / SAMPLES - mu * mu;
-for (const v of s) m4 += (v - mu) ** 4;
+for (const v of drawn) m4 += (v - mu) ** 4;
 const kurt = m4 / SAMPLES / (m2 * m2);
-const q = (p) => s[Math.floor(p * SAMPLES)];
-const measured = (q(0.975) - q(0.025)) / 2;
-const zOk = Math.abs(measured - m.Z95) < TOL_Z;
+const q = (p) => drawn[Math.floor(p * SAMPLES)];
+const measured = (q(HI) - q(LO)) / 2;
+const zOk = Math.abs(measured - m.Z) < TOL_Z;
+
+// The Gaussian comparison uses the same estimator on the same number of
+// standard normal draws, so both numbers carry the same Monte Carlo
+// error and no special functions are needed to produce it.
+const gauss = new Float64Array(SAMPLES);
+for (let i = 0; i < SAMPLES; i += 2) {
+  const r = Math.sqrt(-2 * Math.log(1 - Math.random()));
+  const th = 2 * Math.PI * Math.random();
+  gauss[i] = r * Math.cos(th);
+  if (i + 1 < SAMPLES) gauss[i + 1] = r * Math.sin(th);
+}
+gauss.sort();
+const gz = (gauss[Math.floor(HI * SAMPLES)] - gauss[Math.floor(LO * SAMPLES)]) / 2;
 
 console.log(`   sd        = ${Math.sqrt(m2).toFixed(6)}`);
 console.log(`   kurtosis  = ${kurt.toFixed(4)}   (3 = Gaussian; below it means shorter tails)`);
-console.log(`   q(2.5%)   = ${q(0.025).toFixed(5)}`);
-console.log(`   q(97.5%)  = ${q(0.975).toFixed(5)}`);
-console.log(`   half-width= ${measured.toFixed(5)}   vs shipped Z95 ${m.Z95}   ${mark(zOk)}`);
-console.log(`   (a Gaussian would want 1.95996 — using it here would be wrong by ` +
-            `${(((1.959964 / measured) - 1) * 100).toFixed(2)}%)`);
-if (!zOk) fail.push(`Z95 should be ${measured.toFixed(4)}, glass.js ships ${m.Z95}`);
+console.log(`   q(${(LO * 100).toFixed(1)}%)  = ${q(LO).toFixed(5)}`);
+console.log(`   q(${(HI * 100).toFixed(1)}%)  = ${q(HI).toFixed(5)}`);
+console.log(`   half-width= ${measured.toFixed(5)}   vs shipped Z ${m.Z}   ${mark(zOk)}`);
+console.log(`   a normal would want ${gz.toFixed(5)} at this level — ` +
+            `off by ${(((gz / measured) - 1) * 100).toFixed(2)}%, so do not borrow it`);
+if (!zOk) fail.push(`Z should be ${measured.toFixed(4)}, glass.js ships ${m.Z}`);
 
 /* ---------- 3. coverage of the band as drawn ---------- */
 
-console.log('\n4. coverage of the band as drawn (target 95%)');
+console.log(`\n4. coverage of the band as drawn (target ${pct}%)`);
 const up = m.bandEdge(+1), lo = m.bandEdge(-1);
 let total = 0, inside = 0;
 for (const t of [0, 0.9, 3.4, 12.7, 41.2]) {
@@ -160,9 +183,9 @@ for (const t of [0, 0.9, 3.4, 12.7, 41.2]) {
   console.log(`   t=${String(t).padStart(5)}   ${(100 * tin / ttot).toFixed(3)}%`);
 }
 const coverage = 100 * inside / total;
-const covOk = Math.abs(coverage - 95) < TOL_COVER;
+const covOk = Math.abs(coverage - m.LEVEL * 100) < TOL_COVER;
 console.log(`   overall   ${coverage.toFixed(3)}%   over ${(total / 1e6).toFixed(1)}M points  ${mark(covOk)}`);
-if (!covOk) fail.push(`band covers ${coverage.toFixed(2)}% of the paths, not 95%`);
+if (!covOk) fail.push(`band covers ${coverage.toFixed(2)}% of the paths, not ${pct}%`);
 
 /* ---------- 4. the mean line is the mean, not a draw ---------- */
 
@@ -174,17 +197,33 @@ for (let i = 0; i <= 60; i++) {
   worst = Math.max(worst, Math.abs(acc / PATHS_MC - m.mean(x, 2.2)));
 }
 const meanOk = worst < 0.02;
-console.log(`\n5. drawn mean line vs empirical mean of the paths`);
+console.log('\n5. drawn mean line vs empirical mean of the paths');
 console.log(`   max |difference| = ${worst.toFixed(5)}  ${mark(meanOk)}`);
 if (!meanOk) fail.push(`the mean line is off the paths' mean by ${worst.toFixed(4)}`);
+
+/* ---------- 5. the label matches the maths ---------- */
+
+console.log('\n6. hero legend in index.html');
+const html = fs.readFileSync(INDEX, 'utf8');
+const label = html.match(/([\d.]+)\s*%\s*credible band/i);
+if (!label) {
+  console.log('   no "<n>% credible band" legend found          FAIL');
+  fail.push('index.html has no "<n>% credible band" legend to check');
+} else {
+  const labelled = Number(label[1]);
+  const ok = Math.abs(labelled - m.LEVEL * 100) < 1e-9;
+  console.log(`   legend says "${label[0]}", model draws ${pct}%   ${mark(ok)}`);
+  if (!ok) fail.push(`the legend says ${labelled}% but the model draws ${pct}%`);
+}
 
 /* ---------- verdict ---------- */
 
 if (fail.length) {
   console.log('\nFAILED:');
   for (const f of fail) console.log('  - ' + f);
-  console.log('\nIf you changed K, FREQ or the weighting on purpose, update Z95 in');
-  console.log('js/glass.js to the half-width printed above and run this again.');
+  console.log('\nIf you changed LEVEL, K, FREQ or the weighting on purpose, set Z in');
+  console.log('js/glass.js to the half-width printed above, fix the legend to match,');
+  console.log('and run this again.');
   process.exit(1);
 }
-console.log('\nAll checks passed — the legend\'s "95% credible band" is accurate.');
+console.log(`\nAll checks passed — the legend's "${pct}% credible band" is accurate.`);

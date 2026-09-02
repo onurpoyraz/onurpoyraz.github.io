@@ -130,17 +130,25 @@ Add `class="glass"` to any element to make it glass, plus `glass-capsule` for a 
 ### The hero animation
 `js/glass.js` draws it. `NOW` sets where the forecast boundary sits, `PATHS` how many posterior samples are drawn, and `MAX_DPR` caps the backing-store resolution (the canvas follows `devicePixelRatio` up to that cap, so the strokes stay sharp on retina panels without paying for pixels nobody can see). It pauses when the hero scrolls away, when the tab is hidden, and when the visitor prefers reduced motion.
 
-The legend under it claims a **95% credible band**, and the band really is one. Each sample path is `mean(x) + sigma(x) * noise(x)`, where `noise` is a random-phase spectral process — `K` cosines whose weights are normalised so that `sum(W^2) = 2`, which makes its variance exactly 1 at every `x`. Because the marginal is then a known distribution, the band can be drawn as `mean ± Z95 * sigma` rather than as a shape wrapped around whichever paths happened to land furthest out, and the paths are draws from that same distribution — so about one point in twenty falls outside the band, as it should.
+The legend under it claims a **90% credible band**, and the band really is one. Each sample path is `mean(x) + sigma(x) * noise(x)`, where `noise` is a random-phase spectral process — `K` cosines whose weights are normalised so that `sum(W^2) = 2`, which makes its variance exactly 1 at every `x`. Because the marginal is then a known distribution, the band can be drawn as `mean ± Z * sigma` rather than as a shape wrapped around whichever paths happened to land furthest out, and the paths are draws from that same distribution — so about one point in ten falls outside the band, as it should.
 
-`Z95 = 1.9432` is **not** the Gaussian 1.95996: a sum of 12 random-phase cosines is slightly platykurtic (kurtosis ≈ 2.77), so its central 95% interval is about 0.9% narrower than a normal's. `SIG_OBS` and `SIG_FAR` set how tight the posterior is over the observed stretch and how wide it opens at the horizon; they control the size of the fan, not its correctness.
+Two constants set the band: `LEVEL = 0.90` is the credible level the legend advertises, and `Z = 1.6498` is the half-width of the process's central interval at that level, in units of its sd.
 
-If you change `K`, `FREQ` or the weighting, `Z95` goes stale — so it is checked rather than trusted:
+**`Z` is measured, never assumed.** The process is not Gaussian: a sum of 12 random-phase cosines is platykurtic (kurtosis ≈ 2.77) — short in the tails, full in the shoulders — and the sign of the error against a normal flips with the level. At 95% the true interval is 0.86% *narrower* than 1.95996; at 90% it is 0.30% *wider* than 1.64485. There is no safe rule of thumb here, which is the whole reason the constant is checked.
+
+`SIG_OBS` and `SIG_FAR` set how tight the posterior is over the observed stretch and how wide it opens at the horizon; they scale the fan, not its correctness.
+
+### Changing the credible level, or the process
+
+`Z` goes stale the moment `LEVEL`, `K`, `FREQ` or the weighting changes, so it is checked rather than trusted:
 
 ```bash
-node scripts/verify-credible-band.js      # ~5s, needs node, no packages
+node scripts/verify-credible-band.js      # ~6s, needs node, no packages
 ```
 
-It reads the model out of `js/glass.js` (the blocks between the `verified:` markers) and runs *that* code rather than a copy, so the check cannot drift away from the drawing. It re-derives `Z95` by Monte Carlo, measures what fraction of sample paths actually land inside the band as drawn, and confirms the "posterior mean" line is the model's mean rather than one more draw. It exits non-zero and prints the correct `Z95` if anything is off.
+It reads the model out of `js/glass.js` (the blocks between the `verified:` markers) and runs *that* code rather than a copy, so the check cannot drift away from the drawing. It re-derives `Z` by Monte Carlo, measures what fraction of sample paths actually land inside the band as drawn, confirms the "posterior mean" line is the model's mean rather than one more draw, and checks that the hero legend in `index.html` names the same level the model is drawing — a correct band under a wrong label is still a lie. It exits non-zero and prints the value to paste if anything is off.
+
+So to move to, say, an 80% band: set `LEVEL = 0.80` in `js/glass.js`, change the legend text in `index.html` to match, run the script, and paste the half-width it prints into `Z`. Run it once more; it should be silent.
 
 ### Tune animations / layout
 Layout, spacing, and animations are in `css/style.css`. Section boundaries inside that file are marked with banner comments (e.g. `/* HERO */`, `/* TIMELINE */`).
