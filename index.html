@@ -85,7 +85,7 @@
 
   <!-- Styles -->
   <link rel="stylesheet" href="css/themes.css?v=2" />
-  <link rel="stylesheet" href="css/style.css?v=2" />
+  <link rel="stylesheet" href="css/style.css?v=3" />
 
   <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
@@ -507,12 +507,34 @@
     <section id="contact" class="section">
       <h2 class="section-title reveal">Contact</h2>
       <div class="contact-body glass reveal">
-        <p>The best way to reach me is by email.</p>
-        <p class="contact-email"><a href="mailto:onur.poyraz@icloud.com">onur.poyraz@icloud.com</a></p>
+        <p>
+          Always happy to connect. If you’d like to chat, I’d be glad to hear from you.
+        </p>
+        <p>
+          And if you spot anything on this site that I got wrong, I’d genuinely love to hear about it.
+        </p>
+        <!-- Only the two channels that are actually for reaching a person.
+             GitHub and Scholar are places to read the work, not to start a
+             conversation; they are already linked from the hero. -->
         <div class="contact-links">
-          <a href="https://github.com/onurpoyraz" class="glass glass-capsule glass-interactive" target="_blank" rel="noopener">GitHub</a>
+          <!-- One capsule, two actions. Clicking the label opens a mail
+               client, which is the right default but leaves anyone who
+               just wants the address — to paste into a webmail tab, or
+               on a phone — with nothing to take. The icon copies it.
+               They are siblings rather than nested: a <button> inside an
+               <a> is invalid and unreachable by keyboard. -->
+          <span class="mail-chip glass glass-capsule glass-interactive">
+            <a href="mailto:onur.poyraz@icloud.com">Email</a>
+            <button type="button" class="mail-copy" data-copy="onur.poyraz@icloud.com"
+                    aria-label="Copy email address to clipboard">
+              <svg class="i-copy" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <svg class="i-done" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+            </button>
+            <!-- Names what was copied, because the label only says
+                 "Email" — and announces it to a screen reader. -->
+            <span class="mail-flash" role="status" aria-live="polite"></span>
+          </span>
           <a href="https://www.linkedin.com/in/onur-poyraz" class="glass glass-capsule glass-interactive" target="_blank" rel="noopener">LinkedIn</a>
-          <a href="https://scholar.google.com/citations?user=Unuu7tgAAAAJ&amp;hl=en" class="glass glass-capsule glass-interactive" target="_blank" rel="noopener">Google Scholar</a>
         </div>
       </div>
     </section>
@@ -522,6 +544,6 @@
   <script src="js/glass.js?v=3"></script>
   <script src="js/experience.js?v=1"></script>
   <script src="js/publications.js?v=4"></script>
-  <script src="js/main.js?v=2"></script>
+  <script src="js/main.js?v=3"></script>
 </body>
 </html>
