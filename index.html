@@ -6,10 +6,77 @@
   <title>Onur Poyraz — Senior Data Scientist, Probabilistic Machine Learning</title>
   <meta name="description" content="Personal webpage of Onur Poyraz, PhD — Senior Data Scientist working on probabilistic machine learning, causal inference, and forecasting for longitudinal healthcare data." />
 
-  <!-- Open Graph -->
+  <!-- One address for this page. The site answers on a few URL shapes
+       (with and without /index.html, with tracking parameters bolted on
+       by whoever shared it); this names the real one so search engines
+       do not split the page into several, and so a shared link is
+       attributed to the clean URL. Update both this and og:url if the
+       site ever moves to its own domain. -->
+  <link rel="canonical" href="https://onurpoyraz.github.io/" />
+
+  <!-- Open Graph: the link preview card on LinkedIn, Slack, iMessage,
+       WhatsApp. Most people meet this site as a link rather than by
+       typing the address, so this card is seen more often than the page
+       itself. og:image must be an absolute URL — a relative one fails
+       silently — and it points at a pre-rendered PNG because unfurl
+       crawlers do not execute JavaScript and so can never see the hero
+       canvas. Regenerate it with scripts/render-og-card.sh. -->
   <meta property="og:title" content="Onur Poyraz" />
   <meta property="og:description" content="Senior Data Scientist, PhD — probabilistic modeling, causal inference, and time-series forecasting for healthcare." />
   <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://onurpoyraz.github.io/" />
+  <meta property="og:site_name" content="Onur Poyraz" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:image" content="https://onurpoyraz.github.io/assets/og-card.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Onur Poyraz — Senior Data Scientist, PhD. Probabilistic ML, causal inference, forecasting." />
+
+  <!-- X reads the Open Graph tags for everything else; this one tag is
+       all it needs to pick the large-image layout over the small one. -->
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <!-- Structured data. sameAs is the point of it: it tells a search
+       engine that this page, the GitHub account, the LinkedIn profile
+       and the Scholar profile are one person, which is what separates
+       him from everyone else with the same name. Deliberately no email
+       here — the address is on the page for humans, and repeating it in
+       machine-readable form mostly feeds scrapers. -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Onur Poyraz",
+    "url": "https://onurpoyraz.github.io/",
+    "image": "https://onurpoyraz.github.io/assets/photo.jpg",
+    "jobTitle": "Senior Data Scientist",
+    "description": "Senior Data Scientist, PhD — probabilistic machine learning, causal inference, and time-series forecasting for longitudinal healthcare data.",
+    "worksFor": { "@type": "Organization", "name": "Vaalia Health" },
+    "alumniOf": [
+      { "@type": "CollegeOrUniversity", "name": "Aalto University" },
+      { "@type": "CollegeOrUniversity", "name": "Boğaziçi University" }
+    ],
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Espoo",
+      "addressCountry": "FI"
+    },
+    "knowsAbout": [
+      "Probabilistic machine learning",
+      "Bayesian inference",
+      "Causal inference",
+      "Time-series forecasting",
+      "State-space models",
+      "Longitudinal healthcare data"
+    ],
+    "sameAs": [
+      "https://github.com/onurpoyraz",
+      "https://www.linkedin.com/in/onur-poyraz",
+      "https://scholar.google.com/citations?user=Unuu7tgAAAAJ&hl=en"
+    ]
+  }
+  </script>
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />

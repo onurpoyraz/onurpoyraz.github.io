@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <title>og-card source</title>
+  <!--
+    Source for assets/og-card.png — the image link previews show on
+    LinkedIn, Slack, X, iMessage and the rest.
+
+    Rendered to PNG by scripts/render-og-card.sh. Not linked from the
+    site; it exists only to be screenshotted at 1200x630.
+
+    It pulls in the real css/themes.css and the real js/glass.js, and
+    the canvas below carries the id glass.js looks for, so the forecast
+    on the card is the same forecast the hero draws. Change the palette
+    or the model and re-running the script updates the card — there is
+    no second copy of the design to keep in sync.
+
+    Why a separate layout instead of a screenshot of the hero: the card
+    is usually displayed around 400px wide in a feed. At that size the
+    hero's tagline is unreadable, so the type here is much larger and
+    the copy is cut to what survives the shrink.
+  -->
+  <link rel="stylesheet" href="../css/themes.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@600;700&family=Public+Sans:wght@400;500&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    /* Exactly the card size. The screenshot is taken at this viewport,
+       so nothing here may depend on the window being any other shape. */
+    html, body { width: 1200px; height: 630px; overflow: hidden; }
+
+    body {
+      position: relative;
+      /* The card is composited on the platform's own background — white
+         on LinkedIn — so it has to carry its own ground or it reads as a
+         hole in the feed. */
+      background: var(--ground-deep);
+      font-family: var(--font-body);
+      color: var(--text);
+    }
+
+    /* Same ambient mesh the site sits on, sized for the card. */
+    .ground {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(60% 80% at 12% 20%, var(--mesh-a), transparent 70%),
+        radial-gradient(70% 90% at 78% 30%, var(--mesh-b), transparent 70%),
+        radial-gradient(60% 80% at 88% 88%, var(--mesh-c), transparent 70%),
+        radial-gradient(50% 70% at 20% 95%, var(--mesh-d), transparent 70%);
+      opacity: 0.55;
+    }
+
+    #hero-canvas {
+      position: absolute;
+      inset: 0;
+      width: 1200px;
+      height: 630px;
+      -webkit-mask-image: linear-gradient(90deg, transparent 26%, #000 62%, #000 100%);
+      mask-image: linear-gradient(90deg, transparent 26%, #000 62%, #000 100%);
+    }
+
+    .card {
+      position: absolute;
+      inset: 0;
+      padding: 74px 80px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .eyebrow {
+      font-family: var(--font-mono);
+      font-size: 21px;
+      font-weight: 500;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 26px;
+    }
+
+    h1 {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 104px;
+      line-height: 1;
+      letter-spacing: -0.02em;
+      margin-bottom: 30px;
+    }
+
+    /* Short single lines, not a wrapped paragraph: a feed renders this
+       around 400px wide, and wrapped body copy turns to mush there. */
+    .role {
+      font-size: 38px;
+      line-height: 1.2;
+      color: var(--text);
+      margin-bottom: 16px;
+    }
+    .topics {
+      font-size: 27px;
+      line-height: 1.2;
+      color: var(--text-muted);
+    }
+
+    .foot {
+      position: absolute;
+      left: 80px;
+      bottom: 56px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      font-family: var(--font-mono);
+      font-size: 20px;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-subtle);
+    }
+    .foot::before {
+      content: '';
+      width: 46px;
+      height: 3px;
+      border-radius: 3px;
+      background: var(--accent);
+    }
+  </style>
+</head>
+<body>
+  <div class="ground"></div>
+  <canvas id="hero-canvas"></canvas>
+
+  <div class="card">
+    <div class="eyebrow">Espoo, Finland</div>
+    <h1>Onur Poyraz</h1>
+    <p class="role">Senior Data Scientist, PhD</p>
+    <p class="topics">Probabilistic ML &middot; Causal inference &middot; Forecasting</p>
+  </div>
+
+  <div class="foot">onurpoyraz.github.io</div>
+
+  <script src="../js/glass.js"></script>
+</body>
+</html>

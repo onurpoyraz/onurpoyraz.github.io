@@ -43,9 +43,12 @@ Every push to `main` redeploys automatically.
 │   ├── industry.pdf         # Industry CV — linked from the hero "Industry CV" button
 │   ├── academic.pdf        # Academic CV — linked from the hero "Academic CV" button
 │   ├── photo.jpg           # Profile photo shown in the hero
+│   ├── og-card.png         # Link-preview image — generated, do not hand-edit
 │   └── favicon.svg         # Browser tab icon
 ├── scripts/
-│   └── verify-credible-band.js  # Checks the hero band really is a 95% band
+│   ├── verify-credible-band.js  # Checks the hero band really is a 90% band
+│   ├── og-card.html             # Source layout for the link-preview image
+│   └── render-og-card.sh        # Renders that layout to assets/og-card.png
 ├── pyproject.toml          # Pins Python version for the dev server (uv)
 ├── uv.lock                 # uv lockfile — commit this for reproducibility
 └── README.md               # You are here
@@ -110,6 +113,24 @@ Edit `<section id="hero">` in `index.html`. Replace `assets/photo.jpg` to change
 
 ### Change your CV
 Two CVs are published: `assets/industry.pdf` (industry) and `assets/academic.pdf` (academic). Replace either file with a new one of the same name; both are linked from the hero.
+
+### Change the link preview (Open Graph card)
+Most people meet this site as a link — in a LinkedIn post, a Slack message, a DM — rather than by typing the address, so the preview card is seen more often than the page. `assets/og-card.png` is that card, and `index.html` points at it with an **absolute** URL (a relative one fails silently).
+
+The card cannot be a screenshot of the hero taken on the fly: unfurl crawlers do not execute JavaScript, so they can never see a canvas. It is pre-rendered and committed:
+
+```bash
+./scripts/render-og-card.sh        # needs Chrome; CHROME=/path/to/chrome to override
+```
+
+`scripts/og-card.html` is the layout it shoots. It loads the real `css/themes.css` and the real `js/glass.js`, so the forecast on the card is the forecast the hero draws — re-run the script after changing the palette or the model and the card follows. The copy is deliberately shorter and much larger than the hero's: feeds render the card around 400px wide, where the site's tagline would be unreadable.
+
+Two things to know when you change it:
+
+- **The image carries its own dark background on purpose.** LinkedIn composites cards on white; a transparent or edge-less image reads as a hole in the feed.
+- **Previews are cached for about a week.** After deploying a new card, force a refetch with [LinkedIn's Post Inspector](https://www.linkedin.com/post-inspector/) or [Facebook's Sharing Debugger](https://developers.facebook.com/tools/debug/), or rename the file. Slack caches too.
+
+If the site ever moves to its own domain, update `og:url`, `og:image` and `<link rel="canonical">` together — otherwise it keeps advertising the old host.
 
 ### Change social / contact links
 Hero section and Contact section in `index.html` both have link lists. Search for `github.com/onurpoyraz` to find them quickly.
