@@ -38,10 +38,19 @@ function parseBibtex(src) {
 }
 
 /** Format authors: "Last, First and Last, First" -> "F. Last, F. Last"
- *  Wraps the site owner's name in a <span class="me">. */
+ *  Wraps the site owner's name in a <span class="me">.
+ *
+ *  BibTeX writes a truncated author list as "... and others". That is a
+ *  marker, not a person, so it must not go through the initials path —
+ *  it used to render literally, as "O. Poyraz, S. Heinonen, others".
+ *  It becomes "et al.", attached without a comma the way a citation
+ *  reads. */
 function formatAuthors(authors) {
   if (!authors) return '';
-  return authors.split(/\s+and\s+/).map(a => {
+  const parts = authors.split(/\s+and\s+/);
+  const truncated = parts.length > 1 &&
+    parts[parts.length - 1].trim().toLowerCase() === 'others';
+  const names = (truncated ? parts.slice(0, -1) : parts).map(a => {
     const isMe = a.trim() === ME;
     let display;
     if (a.includes(',')) {
@@ -53,6 +62,7 @@ function formatAuthors(authors) {
     }
     return isMe ? `<span class="me">${display}</span>` : display;
   }).join(', ');
+  return truncated ? `${names} et al.` : names;
 }
 
 /** Build a link button if a URL/DOI is present. */
