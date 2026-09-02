@@ -7,9 +7,10 @@
         light source as you move past it.
      2. The hero forecast. A live posterior: sample paths that agree
         on the left of the "now" line and fan into a widening credible
-        band on the right. Drawn at half resolution — it sits behind
-        a mask and a blur, so nobody can tell, and it costs half as
-        much to paint.
+        band on the right. The backing store follows devicePixelRatio
+        (capped at 2) so the strokes stay crisp on retina panels, and
+        the paths are drawn as Catmull-Rom splines rather than a
+        polyline so the curvature survives the higher resolution.
 
    Both no-op under prefers-reduced-motion: the canvas still draws,
    it just stops advancing.
@@ -54,10 +55,12 @@
     const ctx = canvas.getContext('2d', { alpha: true });
     if (!ctx) return;
 
-    const SCALE = 0.5;             // half-res backing store
+    const MAX_DPR = 2;             // beyond 2x the extra pixels are invisible
     const NOW = 0.42;              // x fraction where forecast begins
     const PATHS = 7;               // posterior sample paths
-    let w = 0, h = 0, t = 0, raf = null;
+    // w/h are CSS pixels; the context is scaled so all drawing below
+    // can stay in CSS units regardless of the panel's pixel density.
+    let w = 0, h = 0, t = 0, raf = null, segments = 96, band = null;
 
     /** Read the live theme colors so the canvas re-tints with the page.
      *
@@ -86,12 +89,28 @@
     }
     let pal = palette();
 
+    /** The band gradient only depends on width and palette, so build it
+     *  once per resize/theme change instead of once per frame. */
+    function makeBand() {
+      const g = ctx.createLinearGradient(0, 0, w, 0);
+      g.addColorStop(0, pal.c2);
+      g.addColorStop(NOW, pal.c1);
+      g.addColorStop(1, pal.c3);
+      band = g;
+    }
+
     function resize() {
       const r = canvas.getBoundingClientRect();
-      w = Math.max(1, Math.round(r.width * SCALE));
-      h = Math.max(1, Math.round(r.height * SCALE));
-      canvas.width = w;
-      canvas.height = h;
+      const dpr = Math.min(window.devicePixelRatio || 1, MAX_DPR);
+      w = Math.max(1, r.width);
+      h = Math.max(1, r.height);
+      canvas.width = Math.round(w * dpr);
+      canvas.height = Math.round(h * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      // Enough samples that the spline has real curvature to follow,
+      // without paying for a control point every pixel.
+      segments = Math.max(64, Math.min(256, Math.round(w / 10)));
+      makeBand();
       draw();
     }
 
@@ -114,17 +133,38 @@
 
     function pathPoints(seed, time) {
       const pts = [];
-      for (let i = 0; i <= 64; i++) {
-        const x = i / 64;
+      for (let i = 0; i <= segments; i++) {
+        const x = i / segments;
         pts.push([x * w, h * 0.5 + value(x, seed, time) * h * 0.3]);
       }
       return pts;
     }
 
+    /** Trace pts as a Catmull-Rom spline converted to cubic beziers.
+     *  A polyline through the same points reads as faceted once the
+     *  stroke is sharp; this keeps the curve smooth at any resolution.
+     *  `reverse` walks the array backwards, which the band needs for
+     *  its return edge. */
+    function trace(pts, reverse) {
+      const n = pts.length;
+      const at = (i) => pts[reverse ? n - 1 - i : i];
+      for (let i = 0; i < n - 1; i++) {
+        const p0 = at(Math.max(0, i - 1));
+        const p1 = at(i);
+        const p2 = at(i + 1);
+        const p3 = at(Math.min(n - 1, i + 2));
+        ctx.bezierCurveTo(
+          p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6,
+          p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6,
+          p2[0], p2[1]
+        );
+      }
+    }
+
     function stroke(pts, color, width, alpha) {
       ctx.beginPath();
       ctx.moveTo(pts[0][0], pts[0][1]);
-      for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
+      trace(pts, false);
       ctx.strokeStyle = color;
       ctx.globalAlpha = alpha;
       ctx.lineWidth = width;
@@ -143,13 +183,11 @@
       const lo = pathPoints(3.2, t);
       ctx.beginPath();
       ctx.moveTo(hi[0][0], hi[0][1]);
-      for (let i = 1; i < hi.length; i++) ctx.lineTo(hi[i][0], hi[i][1]);
-      for (let i = lo.length - 1; i >= 0; i--) ctx.lineTo(lo[i][0], lo[i][1]);
+      trace(hi, false);
+      ctx.lineTo(lo[lo.length - 1][0], lo[lo.length - 1][1]);
+      trace(lo, true);
       ctx.closePath();
-      const band = ctx.createLinearGradient(0, 0, w, 0);
-      band.addColorStop(0, pal.c2);
-      band.addColorStop(NOW, pal.c1);
-      band.addColorStop(1, pal.c3);
+      if (!band) makeBand();
       ctx.fillStyle = band;
       ctx.globalAlpha = 0.2;
       ctx.fill();
@@ -159,20 +197,20 @@
       for (let i = 0; i < PATHS; i++) {
         const seed = (i - (PATHS - 1) / 2) * 0.95;
         const pts = pathPoints(seed, t);
-        stroke(pts, i % 2 ? pal.c1 : pal.c2, 1.2, 0.26);
+        stroke(pts, i % 2 ? pal.c1 : pal.c2, 1.5, 0.32);
       }
 
       // Posterior mean, drawn brighter — the number you would report.
-      stroke(pathPoints(0, t), pal.c1, 2.6, 0.75);
+      stroke(pathPoints(0, t), pal.c1, 3, 0.75);
 
       // The "now" boundary: everything left is observed, right is forecast.
       ctx.beginPath();
-      ctx.setLineDash([3, 5]);
+      ctx.setLineDash([4, 7]);
       ctx.moveTo(w * NOW, h * 0.3);
       ctx.lineTo(w * NOW, h * 0.7);
       ctx.strokeStyle = pal.c4;
       ctx.globalAlpha = 0.32;
-      ctx.lineWidth = 1;
+      ctx.lineWidth = 1.25;
       ctx.stroke();
       ctx.setLineDash([]);
       ctx.globalAlpha = 1;
@@ -219,14 +257,29 @@
     // Re-read the palette whenever the theme attribute flips.
     new MutationObserver(() => {
       pal = palette();
+      makeBand();
       draw();
     }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
     let rt;
-    window.addEventListener('resize', () => {
+    function scheduleResize() {
       clearTimeout(rt);
       rt = setTimeout(resize, 150);
-    });
+    }
+    window.addEventListener('resize', scheduleResize);
+
+    // Moving the window to a panel with a different pixel density does
+    // not fire resize, so watch the resolution query directly.
+    (function watchDpr() {
+      const mq = window.matchMedia(
+        `(resolution: ${window.devicePixelRatio || 1}dppx)`
+      );
+      const onChange = () => {
+        resize();
+        watchDpr();
+      };
+      if (mq.addEventListener) mq.addEventListener('change', onChange, { once: true });
+    })();
 
     resize();
   })();
