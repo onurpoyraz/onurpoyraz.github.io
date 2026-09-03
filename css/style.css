@@ -798,12 +798,47 @@ ul, ol { list-style: none; }
   font-size: 0.78rem;
   padding: 0.3rem 0.7rem;
   border-radius: var(--r-capsule);
+  transition: border-color var(--t-fast), color var(--t-fast);
+}
+
+/* The hierarchy the section was missing. Tinted tags are the expertise;
+   quiet outlined ones are what it is built with. Same shape so they
+   still read as one family, different weight so a reader can tell in a
+   glance which is which. */
+.skill-group.is-primary .skill-tags span {
   background: var(--accent-soft);
   color: var(--accent);
   border: 1px solid transparent;
-  transition: border-color var(--t-fast);
 }
-.skill-tags span:hover { border-color: var(--accent); }
+.skill-group.is-primary .skill-tags span:hover { border-color: var(--accent); }
+
+.skill-group:not(.is-primary) .skill-tags span {
+  background: none;
+  color: var(--text-muted);
+  border: 1px solid var(--hairline);
+}
+.skill-group:not(.is-primary) .skill-tags span:hover {
+  border-color: var(--glass-edge);
+  color: var(--text);
+}
+
+/* Languages are worth stating and are not a technical claim, so they sit
+   under the grid as an annotation in the page's micro-type. */
+.skill-languages {
+  margin: 0.9rem 0 0;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+.skill-languages .lbl {
+  margin-right: 0.9rem;
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-subtle);
+}
 
 /* ============================================================
    8. PUBLICATIONS

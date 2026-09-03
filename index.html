@@ -85,7 +85,7 @@
 
   <!-- Styles -->
   <link rel="stylesheet" href="css/themes.css?v=2" />
-  <link rel="stylesheet" href="css/style.css?v=3" />
+  <link rel="stylesheet" href="css/style.css?v=4" />
 
   <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
@@ -335,49 +335,36 @@
     <section id="skills" class="section">
       <h2 class="section-title reveal">Skills</h2>
 
+      <!-- Two groups answering two questions: what he works on, and what
+           he builds it with. It used to be six groups and ~30 tags, all in
+           the same capsule, which flattened doctoral-level Bayesian
+           modelling and a package manager onto one line. The cut is the
+           smaller half of the fix; the styling is the other half — the
+           first group is tinted and the second is quiet, so depth and
+           tooling are told apart before a single tag is read. -->
       <div class="skills-grid">
-        <div class="skill-group reveal">
-          <h3>Core expertise</h3>
+        <div class="skill-group is-primary reveal">
+          <h3>What I work on</h3>
           <div class="skill-tags">
-            <span>Time-series forecasting</span><span>Transformers</span><span>Causal inference</span><span>Counterfactuals</span><span>Probabilistic modeling</span><span>Calibration</span><span>Bayesian &amp; state-space models</span><span>Production ML</span><span>Model governance</span><span>Longitudinal healthcare data</span>
+            <span>Time-series forecasting</span><span>Probabilistic modeling</span><span>Bayesian &amp; state-space models</span><span>Causal inference</span><span>Calibration</span><span>Longitudinal healthcare data</span>
           </div>
         </div>
 
         <div class="skill-group reveal">
-          <h3>Core ML</h3>
+          <h3>What I build with</h3>
           <div class="skill-tags">
-            <span>Python</span><span>PyTorch</span><span>PyTorch Lightning</span><span>Spark ML</span>
-          </div>
-        </div>
-
-        <div class="skill-group reveal">
-          <h3>Data platform</h3>
-          <div class="skill-tags">
-            <span>Databricks</span><span>PySpark</span><span>SQL</span>
-          </div>
-        </div>
-
-        <div class="skill-group reveal">
-          <h3>MLOps &amp; engineering</h3>
-          <div class="skill-tags">
-            <span>MLflow</span><span>Hydra / OmegaConf</span><span>pytest</span><span>GitHub Actions</span><span>uv</span><span>Pyrefly</span>
-          </div>
-        </div>
-
-        <div class="skill-group reveal">
-          <h3>Additional</h3>
-          <div class="skill-tags">
-            <span>Stan</span><span>R</span><span>C/C++</span><span>MATLAB</span><span>TensorFlow</span><span>Julia</span>
-          </div>
-        </div>
-
-        <div class="skill-group reveal">
-          <h3>Languages</h3>
-          <div class="skill-tags">
-            <span>Turkish — native</span><span>English — professional</span><span>Finnish — intermediate</span>
+            <span>Python</span><span>PyTorch</span><span>Stan</span><span>PySpark / Databricks</span><span>SQL</span><span>MLflow</span><span>Model governance</span><span>Testing &amp; CI</span>
           </div>
         </div>
       </div>
+
+      <!-- Useful, but not a technical claim — so it reads as an annotation
+           rather than a third group of equal weight. -->
+      <p class="skill-languages reveal">
+        <span class="lbl">Languages</span>
+        Turkish (native) &middot; English (professional) &middot; Finnish (intermediate)
+      </p>
+
     </section>
 
     <!-- ========== PUBLICATIONS ========== -->
