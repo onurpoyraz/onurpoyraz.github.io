@@ -12,6 +12,10 @@
    BibTeX we use (entry type, key, and {...}-delimited fields).
    If you add fancier BibTeX features (nested braces in values,
    @string, @preamble, etc.), extend parseBibtex accordingly.
+
+   Each entry is rendered with id="pub-<bibtex key>", which is what the
+   citations in the Experience work cards link to. Renaming a key here
+   silently breaks those links, so grep the HTML for the old key first.
    ============================================================ */
 
 const BIB_ELEMENT = 'publications-bib';
@@ -119,7 +123,7 @@ function renderPublications(entries) {
         const doi = e.fields.doi ? `https://doi.org/${e.fields.doi}` : null;
         const url = e.fields.url || doi;
         return `
-          <article class="publication" data-type="${e.type}">
+          <article class="publication" id="pub-${e.key}" data-type="${e.type}">
             <h3 class="pub-title">${e.fields.title || ''}</h3>
             <p class="pub-authors">${formatAuthors(e.fields.author)}</p>
             <p class="pub-venue">${formatVenue(e)}</p>
@@ -154,6 +158,54 @@ function renderPublications(entries) {
       });
     });
   });
+
+  wireCitations();
+}
+
+/** The other end of the "#pub-<key>" links in the Experience work cards.
+ *
+ *  A plain anchor would very nearly work — but not quite, for two
+ *  reasons. A filter may be on, and jumping to an entry that is
+ *  display:none scrolls you to nothing at all; and landing on one card
+ *  in a list of six identical cards leaves you hunting for which one
+ *  you were sent to. So: clear the filter, then scroll, then flash the
+ *  entry for a moment. */
+function wireCitations() {
+  const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function reveal(id) {
+    const target = document.getElementById(id);
+    if (!target) return false;
+
+    // Only if a narrower filter is on — clicking the already-active
+    // "All" would be a no-op, but it would also steal focus.
+    const all = document.querySelector('.pub-filter[data-filter="all"]');
+    if (all && !all.classList.contains('active')) all.click();
+
+    target.scrollIntoView({ behavior: still ? 'auto' : 'smooth', block: 'center' });
+
+    // Restart the animation even if the same entry is cited twice in a
+    // row: removing the class is not enough on its own, the layout has
+    // to be read back for the browser to notice it went away.
+    target.classList.remove('is-cited');
+    void target.offsetWidth;
+    target.classList.add('is-cited');
+    return true;
+  }
+
+  document.addEventListener('click', (e) => {
+    const link = e.target.closest('a[href^="#pub-"]');
+    if (!link) return;
+    const id = link.getAttribute('href').slice(1);
+    if (!reveal(id)) return;          // unknown key: let the browser try
+    e.preventDefault();
+    history.replaceState(null, '', `#${id}`);
+  });
+
+  // Arriving on a shared "…/#pub-x" link. The browser already tried to
+  // jump while the list was still an empty div, so it has to be redone
+  // now that the entries exist.
+  if (location.hash.startsWith('#pub-')) reveal(location.hash.slice(1));
 }
 
 const bib = document.getElementById(BIB_ELEMENT);

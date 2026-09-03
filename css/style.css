@@ -10,9 +10,8 @@
      6. Timeline              experience + education
      7. Skills
      8. Publications
-     9. Projects
-    10. Contact
-    11. Motion + responsive
+     9. Contact
+    10. Motion + responsive
    ============================================================ */
 
 /* ============================================================
@@ -578,6 +577,17 @@ ul, ol { list-style: none; }
 .timeline-org { color: var(--text-muted); font-size: 0.92rem; margin-bottom: 0.9rem; }
 .timeline-desc { color: var(--text-muted); font-size: 0.95rem; }
 
+/* A line of framing above the work cards, for the one role whose shape
+   — leading a side of a collaboration, advising the theses that came
+   out of it — is a fact about the job rather than about any single
+   piece of work, so no card can hold it. Rare on purpose: the cards
+   exist because this section had too much prose. */
+.timeline-lede {
+  color: var(--text-muted);
+  font-size: 0.92rem;
+  margin: -0.35rem 0 0.95rem;
+}
+
 .timeline-bullets { display: flex; flex-direction: column; gap: 0.45rem; }
 .timeline-bullets li {
   position: relative;
@@ -596,6 +606,98 @@ ul, ol { list-style: none; }
   background: var(--accent);
   opacity: 0.6;
 }
+
+/* ---------- Work cards ----------
+   What a role produced, one box each, in place of the bullet list that
+   used to sit here. They replaced a Projects section further down the
+   page that described the same work a second time and the Publications
+   list a third; folding it up here is what let the other two go. The
+   keywords are the part worth keeping from those cards — a bullet never
+   carried them — and the citation in the bottom corner is the third
+   telling, reduced to a link. */
+.work-grid {
+  display: grid;
+  /* min(300px, 100%), not a bare 300px: a minmax() minimum is a hard
+     floor, so on a 320px phone — where this card's content box is about
+     240px — a bare 300px track pushes the cards straight out through
+     the side of the card holding them. The min() lets the track give up
+     and match the container instead, which is also why this needs no
+     single-column media query. */
+  grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+  gap: 0.6rem;
+}
+
+/* Not glass. These sit on a slab that is already blurring the mesh
+   behind it, and a second backdrop-filter over the first buys nothing
+   but paint cost — so this is a flat inset panel: a shade darker than
+   its slab in light, a shade lighter in dark. */
+.work-card {
+  display: flex;
+  flex-direction: column;
+  padding: 0.95rem 1rem 0.85rem;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-sm);
+  background: var(--inset);
+  transition: border-color var(--t-fast), background var(--t-fast);
+}
+.work-card:hover { border-color: var(--glass-edge); background: var(--inset-hi); }
+
+.work-card h4 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.95rem;
+  line-height: 1.22;
+  letter-spacing: -0.015em;
+  margin-bottom: 0.4rem;
+}
+.work-card p {
+  font-size: 0.86rem;
+  line-height: 1.55;
+  color: var(--text-muted);
+  margin-bottom: 0.85rem;
+}
+
+/* Keywords left, citation right, both pinned to the bottom — so a row
+   of cards of unequal length still lines its metadata up. */
+.work-foot {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.6rem;
+  margin-top: auto;
+}
+.work-tags { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+.work-tags span {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  padding: 0.2rem 0.55rem;
+  border-radius: var(--r-capsule);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+/* The paper this work became. Quiet on purpose — it is a footnote, not
+   a call to action — and it never wraps or shrinks, so the keywords
+   give way first. The arrow is literal: Publications is further down. */
+.work-cite {
+  flex: none;
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  color: var(--text-subtle);
+  border-bottom: 1px solid transparent;
+  transition: color var(--t-fast), border-color var(--t-fast);
+}
+.work-cite:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* The arrow says where the link goes, and it is the only thing that
+   does: down the page to the Publications entry, or out to a thesis in
+   Aalto's repository. Same weight either way — both are footnotes. */
+.work-cite::before { content: '↓ '; opacity: 0.65; }
+.work-cite.is-external::before { content: '↗ '; }
 
 /* ---------- Overlap map ----------
    The cards below read as a sequence; several of those roles actually
@@ -879,6 +981,15 @@ ul, ol { list-style: none; }
 }
 .publication:hover { border-color: var(--glass-edge); background: var(--glass-fill); }
 
+/* Arriving from a citation in an Experience work card. Six entries in a
+   near-identical stack look the same at a glance, so the one you were
+   sent to holds the accent for a beat and then lets it go. */
+@keyframes pub-cited {
+  0%, 55% { border-color: var(--accent); background: var(--accent-soft); }
+  100%    { border-color: var(--hairline); background: var(--slab); }
+}
+.publication.is-cited { animation: pub-cited 2.6s var(--ease); }
+
 .pub-title { font-size: 1.02rem; margin-bottom: 0.4rem; line-height: 1.35; }
 .pub-authors { font-size: 0.88rem; color: var(--text-muted); margin-bottom: 0.2rem; }
 .pub-authors .me { color: var(--accent); font-weight: 600; }
@@ -928,38 +1039,7 @@ ul, ol { list-style: none; }
 .pub-error { color: var(--text-muted); font-size: 0.95rem; }
 
 /* ============================================================
-   9. PROJECTS
-   ============================================================ */
-.projects-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 0.75rem;
-}
-
-.project-card {
-  padding: 1.5rem;
-  background: var(--slab);
-}
-.project-card:hover { background: var(--glass-fill-strong); }
-.project-card h3 { font-size: 1.08rem; margin-bottom: 0.55rem; }
-.project-card p {
-  font-size: 0.92rem;
-  color: var(--text-muted);
-  margin-bottom: 1rem;
-}
-.project-tags { display: flex; flex-wrap: wrap; gap: 0.35rem; }
-.project-tags span {
-  font-family: var(--font-mono);
-  font-size: 0.62rem;
-  letter-spacing: 0.06em;
-  padding: 0.25rem 0.6rem;
-  border-radius: var(--r-capsule);
-  background: var(--accent-soft);
-  color: var(--accent);
-}
-
-/* ============================================================
-   10. CONTACT
+   9. CONTACT
    ============================================================ */
 .contact-body { padding: 2rem; }
 .contact-body > p { color: var(--text-muted); }
@@ -1041,7 +1121,7 @@ ul, ol { list-style: none; }
 }
 
 /* ============================================================
-   11. MOTION + RESPONSIVE
+   10. MOTION + RESPONSIVE
    ============================================================ */
 .reveal {
   opacity: 0;
@@ -1065,7 +1145,7 @@ ul, ol { list-style: none; }
     -webkit-mask-image: radial-gradient(85% 55% at 50% 45%, #000 25%, transparent 100%);
     mask-image: radial-gradient(85% 55% at 50% 45%, #000 25%, transparent 100%);
   }
-  .projects-grid, .skills-grid { grid-template-columns: 1fr; }
+  .skills-grid { grid-template-columns: 1fr; }
   .section-body, .contact-body { padding: 1.35rem; }
 }
 
@@ -1092,6 +1172,7 @@ ul, ol { list-style: none; }
     border-color: var(--hairline);
     background: var(--slab);
   }
+  .work-card:hover { border-color: var(--hairline); background: var(--inset); }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -80,6 +80,13 @@
   --slab: rgba(255, 255, 255, 0.72);
   --hairline: rgba(13, 18, 32, 0.1);
 
+  /* Panels nested inside a slab (the work cards in Experience). Not
+     glass: a second blur over a slab that is already blurring costs
+     paint and reads as mud. A shade of the text colour instead, so the
+     panel recedes into its slab rather than floating on it. */
+  --inset: rgba(13, 18, 32, 0.035);
+  --inset-hi: rgba(13, 18, 32, 0.06);
+
   /* Ambient mesh behind everything */
   --mesh-a: rgba(46, 230, 192, 0.5);
   --mesh-b: rgba(76, 134, 255, 0.45);
@@ -121,6 +128,10 @@
   --slab: rgba(9, 13, 22, 0.68);
   --hairline: rgba(255, 255, 255, 0.1);
 
+  /* Inset the other way round: in the dark, receding means lighter. */
+  --inset: rgba(255, 255, 255, 0.035);
+  --inset-hi: rgba(255, 255, 255, 0.065);
+
   --mesh-a: rgba(46, 230, 192, 0.3);
   --mesh-b: rgba(76, 134, 255, 0.4);
   --mesh-c: rgba(239, 78, 155, 0.26);
@@ -159,6 +170,10 @@
 
     --slab: rgba(9, 13, 22, 0.68);
     --hairline: rgba(255, 255, 255, 0.1);
+
+    /* Inset the other way round: in the dark, receding means lighter. */
+    --inset: rgba(255, 255, 255, 0.035);
+    --inset-hi: rgba(255, 255, 255, 0.065);
 
     --mesh-a: rgba(46, 230, 192, 0.3);
     --mesh-b: rgba(76, 134, 255, 0.4);
