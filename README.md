@@ -91,7 +91,7 @@ The `work-cite` link is optional and only belongs on work that became something 
    title="Firstname Lastname, “Full title” — M.Sc. thesis, Aalto University, 2025.">F. Lastname, M.Sc. ’25</a>
 ```
 
-A card can carry one `<p class="work-when">` under its heading, naming who the work was for and when — but **only** when the card covers part of its role rather than all of it. The consulting entry is the case it exists for: two engagements, Borusan then BKM, one after the other under one job title. A card whose span is simply its role's span must not have one, or the header dates get repeated.
+A card can carry one `<p class="work-when">` under its heading, naming who the work was for and when — but **only** when the card covers part of its role rather than all of it. The M.Sc. entry is the case it exists for: two engagements, Borusan then BKM, one after the other inside one position. A card whose span is simply its role's span must not have one, or the header dates get repeated.
 
 A role can also carry one `<p class="timeline-lede">` between the org line and the grid, for something true of the job that no single card can hold — Aalto–Nokia uses it to say he led that side and advised the theses. Keep it to one sentence and to one or two roles; the cards exist because this section had too much prose.
 
@@ -109,6 +109,15 @@ Above the cards sits an **overlap map** — a shared time axis, one lane per ent
 ```
 
 `data-kind="research"` (mint) is the two degrees; `data-kind="industry"` (cobalt) is every paid position and university–industry engagement. Lanes are ordered by when they ended, longest first on a tie, which is what lands each degree directly above the work done inside it.
+
+**A lane can also come from a single work card**, for a role that held several separate pieces of work. The M.Sc. entry is one position but two engagements with a gap between them, and a single bar across both would paper the gap over — so the attributes go on the `<article class="work-card">` elements instead, which need an `id` of their own to be linked to:
+
+```html
+<article class="work-card" id="work-borusan"
+         data-start="2017-02" data-end="2018-04" data-short="Borusan R&D">
+```
+
+Leave `data-start` off the `<li>` in that case and keep only its `data-kind`, which the cards inherit. Putting dates on both would draw a role and its own children as three competing lanes, so a role containing a dated card is dropped from the chart itself.
 
 A role with no `data-end` is drawn as ongoing: its bar runs to today and fades out rather than stopping, and "today" is computed at page load, so nothing needs updating as time passes. A card without `data-start` is simply left out of the chart. The chart hides itself if the script does not run.
 

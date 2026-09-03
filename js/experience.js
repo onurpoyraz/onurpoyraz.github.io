@@ -16,10 +16,19 @@
    shows up here with no edit. A role with no data-end is ongoing and
    runs to today, so the chart never needs its end date filled in later.
 
-   Anywhere, not just Experience, because the M.Sc. is a lane too: the
-   Borusan and BKM engagements were done inside that degree, and without
-   its bar underneath them they read as three unrelated jobs. It is the
-   one Education entry carrying the attributes.
+   Anywhere, not just Experience, because the M.Sc. degree is a lane
+   too: the Borusan and BKM engagements were done inside it, and without
+   its bar underneath them they read as unrelated jobs. It is the one
+   Education entry carrying the attributes.
+
+   A lane can also come from a single .work-card rather than a whole
+   role, for a role that held several separate pieces of work: the
+   consulting entry is one position but two engagements with a gap
+   between them, and one bar across both would paper the gap over. Put
+   the attributes on the cards and leave data-start off the role — the
+   cards inherit its data-kind. Doing both would draw the role and its
+   own children as three competing lanes, so a role that has dated cards
+   is dropped from the chart itself.
 
    Two kinds, two colours: 'research' is the two degrees, 'industry' is
    every paid position and university-industry engagement. Lanes are
@@ -32,7 +41,10 @@
   const mount = document.getElementById('experience-chart');
   if (!mount) return;
 
-  const items = [...document.querySelectorAll('main .timeline-item[data-start]')];
+  const items = [...document.querySelectorAll('main [data-start]')]
+    // A role that delegates its bars to its cards must not also draw one
+    // of its own; see the note above.
+    .filter((el) => !el.querySelector('[data-start]'));
   if (!items.length) return;
 
   /* Time is measured in fractional years, which is all the precision a
@@ -48,14 +60,28 @@
     return d.getFullYear() + (d.getMonth() + d.getDate() / 31) / 12;
   })();
 
+  /* Each of these reads the role's version first and the work card's
+     second, because a role element contains its cards and would other-
+     wise match their tags on the way past. closest() for the kind, so a
+     card with no kind of its own inherits the role's. */
+  const pick = (el, ...sels) => {
+    for (const sel of sels) {
+      const hit = el.querySelector(sel);
+      if (hit) return hit.textContent.trim();
+    }
+    return '';
+  };
+
   const rows = items.map((el) => {
     const ongoing = !el.dataset.end;
+    const kind = el.closest('[data-kind]')?.dataset.kind;
+    const role = pick(el, '.timeline-role', 'h4');
     return {
       id: el.id,
-      kind: el.dataset.kind === 'industry' ? 'industry' : 'research',
-      text: el.dataset.short || el.querySelector('.timeline-org').textContent.trim(),
-      role: el.querySelector('.timeline-role').textContent.trim(),
-      when: el.querySelector('.timeline-date').textContent.trim(),
+      kind: kind === 'industry' ? 'industry' : 'research',
+      text: el.dataset.short || pick(el, '.timeline-org') || role,
+      role,
+      when: pick(el, '.timeline-date', '.work-when'),
       start: at(el.dataset.start),
       end: ongoing ? today : at(el.dataset.end) + 1 / 12,
       ongoing
@@ -169,8 +195,9 @@
   });
 
   // ---- cross-highlighting ----------------------------------------
-  // Hovering either half of a role lights the other, which is how you
-  // tell which bar a card belongs to without reading the dates twice.
+  // Hovering either half of a lane lights the other, which is how you
+  // tell which card a bar belongs to without reading the dates twice.
+  // The target is whatever carried the dates — a role, or one card.
   const pair = (lane, on) => {
     lane.classList.toggle('is-lit', on);
     document.getElementById(lane.dataset.target)?.classList.toggle('is-lit', on);

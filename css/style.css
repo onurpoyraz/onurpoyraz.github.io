@@ -837,9 +837,11 @@ ul, ol { list-style: none; }
 .exp-bar:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
 /* The other half of the pairing: hovering a bar lifts its card, and
-   hovering a card lifts its bar. */
+   hovering a card lifts its bar. Either kind of card — a whole role, or
+   the single engagement that drew the bar. */
 .timeline-item.is-lit { border-color: var(--glass-edge); background: var(--glass-fill); }
 .timeline-item.is-lit::before { opacity: 1; }
+.work-card.is-lit { border-color: var(--glass-edge); background: var(--inset-hi); }
 
 .exp-legend {
   display: flex;

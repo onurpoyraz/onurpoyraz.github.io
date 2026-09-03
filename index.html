@@ -361,21 +361,26 @@
         </li>
 
         <!-- Two entries until now: an "M.Sc. Researcher" at Borusan and a
-             "Data Science Consultant" at BKM. They were one job. Both were
-             contract R&D run out of Boğaziçi during the master's, both with
-             the same role in them, one after the other — so they are one
-             card with two engagements, and the dates that used to sit in
-             two headers now sit on the cards that need them. -->
-        <li class="timeline-item reveal" id="exp-consulting" data-start="2017-02" data-end="2019-06" data-kind="industry" data-short="Borusan &amp; BKM">
+             "Data Science Consultant" at BKM. They were one position — the
+             master's — with two consulting engagements run out of it, one
+             after the other. So: one card, an engagement each, and the
+             dates that used to sit in two headers now sit on the cards.
+
+             This is the one entry whose bars come from its work cards
+             rather than from itself: the engagements were separate pieces
+             of work with a gap between them, and one bar spanning both
+             would paper over that. Hence no data-start here — only the
+             data-kind, which the cards inherit. -->
+        <li class="timeline-item reveal" id="exp-msc" data-kind="industry">
           <div class="timeline-meta">
             <span class="timeline-date">Feb 2017 – Jun 2019</span>
             <span class="timeline-loc">İstanbul, Turkey</span>
           </div>
-          <h3 class="timeline-role">Data Science Consultant</h3>
-          <p class="timeline-org">Boğaziçi University — contract R&amp;D with Borusan and BKM, the Interbank Card Center</p>
+          <h3 class="timeline-role">M.Sc. Researcher</h3>
+          <p class="timeline-org">Boğaziçi University — data-science consulting for Borusan and for BKM, the Interbank Card Center</p>
 
           <div class="work-grid">
-            <article class="work-card">
+            <article class="work-card" id="work-borusan" data-start="2017-02" data-end="2018-04" data-short="Borusan R&amp;D">
               <h4>Anomaly detection on wind turbines</h4>
               <p class="work-when">Borusan R&amp;D · Feb 2017 – Apr 2018</p>
               <p>Unsupervised Bayesian and deep time-series models for real-time detection in the noisy multivariate sensor streams of industrial turbines.</p>
@@ -385,7 +390,7 @@
               </div>
             </article>
 
-            <article class="work-card">
+            <article class="work-card" id="work-bkm" data-start="2018-06" data-end="2019-06" data-short="BKM">
               <h4>Fraud detection and merchant risk</h4>
               <p class="work-when">BKM · Jun 2018 – Jun 2019</p>
               <p>Spark pipelines over large-scale credit-card transaction data, producing interpretable fraud-detection and merchant-risk models that went into production analytics.</p>
