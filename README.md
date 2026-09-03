@@ -91,11 +91,13 @@ The `work-cite` link is optional and only belongs on work that became something 
    title="Firstname Lastname, “Full title” — M.Sc. thesis, Aalto University, 2025.">F. Lastname, M.Sc. ’25</a>
 ```
 
+A card can carry one `<p class="work-when">` under its heading, naming who the work was for and when — but **only** when the card covers part of its role rather than all of it. The consulting entry is the case it exists for: two engagements, Borusan then BKM, one after the other under one job title. A card whose span is simply its role's span must not have one, or the header dates get repeated.
+
 A role can also carry one `<p class="timeline-lede">` between the org line and the grid, for something true of the job that no single card can hold — Aalto–Nokia uses it to say he led that side and advised the theses. Keep it to one sentence and to one or two roles; the cards exist because this section had too much prose.
 
 This is where the page's Projects section went. It described the same six pieces of work the Experience bullets described and the Publications list described a third time; the cards keep the part that was worth keeping — the keywords — and the citation replaces the third telling with a link.
 
-Above the cards sits an **overlap map** — a shared time axis, one lane per entry, so work that ran at the same time (the Aalto–Nokia workstream inside the Ph.D., DeepC alongside BKM) reads as concurrent instead of as a sequence. `js/experience.js` builds it from the cards themselves, so a new job appears in it automatically as long as the `<li>` carries these attributes:
+Above the cards sits an **overlap map** — a shared time axis, one lane per entry, so work that ran at the same time (the Aalto–Nokia workstream inside the Ph.D., DeepC alongside the BKM engagement) reads as concurrent instead of as a sequence. `js/experience.js` builds it from the cards themselves, so a new job appears in it automatically as long as the `<li>` carries these attributes:
 
 ```html
 <li class="timeline-item reveal"

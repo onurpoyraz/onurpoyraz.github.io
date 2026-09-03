@@ -657,6 +657,21 @@ ul, ol { list-style: none; }
   margin-bottom: 0.85rem;
 }
 
+/* Who it was for and when, for a card that covers only part of its
+   role. Only the consulting entry needs it — two engagements, one after
+   the other, under one job title — and that is the point: a card whose
+   span is simply its role's span must NOT carry this, or the dates in
+   the header get said twice. */
+.work-when {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-subtle);
+  margin: -0.15rem 0 0.5rem;
+}
+
 /* Keywords left, citation right, both pinned to the bottom — so a row
    of cards of unequal length still lines its metadata up. */
 .work-foot {

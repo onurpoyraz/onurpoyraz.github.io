@@ -4,10 +4,11 @@
    The cards are a list, so they read as if the roles happened one
    after another. Several of them ran at the same time, and some ran
    inside another: the Aalto–Nokia workstream sat within the Ph.D., the
-   Borusan and BKM engagements within the M.Sc., and DeepC alongside
-   BKM but unrelated to it. A list cannot show any of that. This draws
-   every entry against one shared time axis, a lane each, so what
-   overlapped and what contained what is visible at a glance.
+   Borusan and BKM consultancy ran the length of the M.Sc., and DeepC
+   overlapped the BKM half of it while being unrelated to any of it. A
+   list cannot show any of that. This draws every entry against one
+   shared time axis, a lane each, so what overlapped and what contained
+   what is visible at a glance.
 
    The cards stay the source of truth: every bar is read off the
    data-start / data-end / data-kind / data-short attributes of a
