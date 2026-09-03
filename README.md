@@ -36,7 +36,7 @@ Every push to `main` redeploys automatically.
 │   └── style.css           # Layout, typography, components, animations
 ├── js/
 │   ├── glass.js            # Glass specular tracking + the hero forecast canvas
-│   ├── experience.js       # Builds the overlap map from the Experience cards
+│   ├── experience.js       # Builds the overlap map from the Experience + M.Sc. cards
 │   ├── main.js             # Theme toggle, scroll-spy, reveal animations
 │   └── publications.js     # Parses the inline BibTeX block, renders the list
 ├── assets/
@@ -62,23 +62,47 @@ All content edits happen in `index.html`. You do not need to touch the JS.
 Edit the `<section id="about">` block in `index.html`.
 
 ### Add or change a job in Experience
-Edit `<section id="experience">`. Each job is one `<li class="timeline-item">` block. Copy an existing one and update the dates, role, org, and bullet points.
+Edit `<section id="experience">`. Each job is one `<li class="timeline-item">` block. Copy an existing one and update the dates, role, org, and work cards.
 
-Above the cards sits an **overlap map** — a shared time axis with one lane per role, so concurrent work (the Aalto–Nokia workstream inside the Ph.D., the BKM engagement alongside DeepC) reads as concurrent instead of as a sequence. `js/experience.js` builds it from the cards themselves, so a new job appears in it automatically as long as the `<li>` carries these attributes:
+**Work cards, not bullets.** What a role produced is written as a grid of small boxes rather than a bullet list:
+
+```html
+<div class="work-grid">
+  <article class="work-card">
+    <h4>What the work was</h4>
+    <p>One or two sentences. No more — the keywords carry the rest.</p>
+    <div class="work-foot">
+      <div class="work-tags"><span>Keyword</span><span>Keyword</span></div>
+      <a class="work-cite" href="#pub-shortkey2025something"
+         title="Full paper title — Venue, Year">Venue ’25</a>
+    </div>
+  </article>
+</div>
+```
+
+The `work-cite` link is optional and only belongs on work that became a paper. Its `href` is `#pub-` plus the **BibTeX key** of the entry in the Publications block below; clicking it clears any active publication filter, scrolls to that entry, and flashes it. Rename a BibTeX key and these links break silently, so grep for the old key before you do.
+
+This is where the page's Projects section went. It described the same six pieces of work the Experience bullets described and the Publications list described a third time; the cards keep the part that was worth keeping — the keywords — and the citation replaces the third telling with a link.
+
+Above the cards sits an **overlap map** — a shared time axis, one lane per entry, so work that ran at the same time (the Aalto–Nokia workstream inside the Ph.D., DeepC alongside BKM) reads as concurrent instead of as a sequence. `js/experience.js` builds it from the cards themselves, so a new job appears in it automatically as long as the `<li>` carries these attributes:
 
 ```html
 <li class="timeline-item reveal"
     id="exp-something"        <!-- anchor the chart bar links to; must be unique -->
     data-start="2025-03"      <!-- YYYY-MM, inclusive -->
     data-end="2025-11"        <!-- YYYY-MM, inclusive; OMIT ENTIRELY if ongoing -->
-    data-kind="industry"      <!-- industry | research — picks the bar colour -->
+    data-kind="role"          <!-- degree | role — picks the bar colour -->
     data-short="Some Org">    <!-- short lane label; falls back to the org line -->
 ```
+
+`data-kind="degree"` (mint) is a period of study, `data-kind="role"` (cobalt) is a position. Lanes are ordered by when they ended, longest first on a tie, which is what lands each degree directly above the work done inside it.
 
 A role with no `data-end` is drawn as ongoing: its bar runs to today and fades out rather than stopping, and "today" is computed at page load, so nothing needs updating as time passes. A card without `data-start` is simply left out of the chart. The chart hides itself if the script does not run.
 
 ### Add or change an education entry
 Same pattern as Experience, inside `<section id="education">`.
+
+One education entry — the M.Sc. — also carries the chart attributes, because the Borusan and BKM engagements were done inside that degree and without its bar underneath them they read as unrelated jobs. The Ph.D. deliberately does **not**: its bar comes from the Ph.D. Researcher card in Experience, which is where that work is described. Add the attributes to an education entry only when it frames work shown elsewhere on the chart.
 
 ### Add a publication
 Append a BibTeX entry to the `<script type="application/x-bibtex" id="publications-bib">` block at the bottom of `<section id="publications">` in `index.html`. It holds plain BibTeX, so entries can be pasted straight in from a `.bib` file or a publisher's "cite" button. Supported entry types are `@article` (rendered as "Journal") and `@inproceedings` (rendered as "Conference"). Common fields:
@@ -103,10 +127,8 @@ Rendering notes:
 - If `url` is set, a generic "Link" button appears. If both `url` and `doi` are set, the "Link" button uses `url`; the "DOI" button always uses `doi`.
 - Each entry also has a "BibTeX" button that toggles an inline BibTeX view.
 - Publications are grouped by `year`, newest first.
+- Each entry is rendered with `id="pub-<bibtex key>"`, which is what the `work-cite` links in Experience point at.
 - The BibTeX lives inline rather than in a fetched `.bib` file because browsers refuse to read a sibling file over `file://` — fetching it meant the Publications section stayed empty whenever the page was opened straight from disk.
-
-### Edit or add a project
-Edit `<section id="projects">`. Each project is a `<article class="project-card">` with a title, description, and a list of `<span>` tags inside `<div class="project-tags">`.
 
 ### Change your name / tagline / photo
 Edit `<section id="hero">` in `index.html`. Replace `assets/photo.jpg` to change the photo (same filename, or update the `<img src>` attribute).

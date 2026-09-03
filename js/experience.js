@@ -2,26 +2,35 @@
    experience.js — the overlap map above the Experience cards
 
    The cards are a list, so they read as if the roles happened one
-   after another. Several of them ran at the same time (the Aalto–Nokia
-   workstream sat inside the Ph.D.; the BKM engagement overlapped
-   DeepC), and a list cannot show that. This draws the same six roles
-   against a shared time axis, one lane each, so the concurrency is
-   visible at a glance.
+   after another. Several of them ran at the same time, and some ran
+   inside another: the Aalto–Nokia workstream sat within the Ph.D., the
+   Borusan and BKM engagements within the M.Sc., and DeepC alongside
+   BKM but unrelated to it. A list cannot show any of that. This draws
+   every entry against one shared time axis, a lane each, so what
+   overlapped and what contained what is visible at a glance.
 
    The cards stay the source of truth: every bar is read off the
    data-start / data-end / data-kind / data-short attributes of a
-   .timeline-item, in the order they appear. Add a role to the list
-   and it shows up here with no edit. A role with no data-end is
-   ongoing and runs to today, so the chart never needs its end date
-   filled in later.
+   .timeline-item, anywhere in the page. Add a role to the list and it
+   shows up here with no edit. A role with no data-end is ongoing and
+   runs to today, so the chart never needs its end date filled in later.
+
+   Anywhere, not just Experience, because the M.Sc. is a lane too: the
+   Borusan and BKM engagements were done inside that degree, and without
+   its bar underneath them they read as three unrelated jobs. It is the
+   one Education entry carrying the attributes.
+
+   Two kinds, two colours: a 'degree' is a period of study, a 'role' is
+   a position. Lanes are ordered by when they ended, then longest first,
+   which is what puts each degree directly above the work done inside
+   it — the containment the chart exists to show.
    ============================================================ */
 
 (function experienceChart() {
   const mount = document.getElementById('experience-chart');
-  const list = document.querySelector('#experience .timeline');
-  if (!mount || !list) return;
+  if (!mount) return;
 
-  const items = [...list.querySelectorAll('.timeline-item[data-start]')];
+  const items = [...document.querySelectorAll('main .timeline-item[data-start]')];
   if (!items.length) return;
 
   /* Time is measured in fractional years, which is all the precision a
@@ -41,7 +50,7 @@
     const ongoing = !el.dataset.end;
     return {
       id: el.id,
-      kind: el.dataset.kind === 'industry' ? 'industry' : 'research',
+      kind: el.dataset.kind === 'degree' ? 'degree' : 'role',
       text: el.dataset.short || el.querySelector('.timeline-org').textContent.trim(),
       role: el.querySelector('.timeline-role').textContent.trim(),
       when: el.querySelector('.timeline-date').textContent.trim(),
@@ -50,6 +59,13 @@
       ongoing
     };
   });
+
+  /* Latest finish first, and on a tie the longer bar first. Document
+     order would do for Experience alone, but the M.Sc. arrives from a
+     different list and has to be placed by its dates. The rule also
+     earns its keep on its own: it lands each degree immediately above
+     the roles that ran inside it, so the nesting reads down the page. */
+  rows.sort((a, b) => (b.end - a.end) || (a.start - b.start));
 
   // Pad to whole years so the axis lands on tick marks. The right edge
   // stops at today rather than at the end of the current year — an
@@ -109,8 +125,8 @@
   }
 
   const legend = el('figcaption', 'exp-legend', mount);
-  for (const [cls, text] of [['lg-research', 'research'],
-                             ['lg-industry', 'industry'],
+  for (const [cls, text] of [['lg-degree', 'degree'],
+                             ['lg-role', 'role'],
                              ['lg-now', 'today']]) {
     el('span', cls, legend).textContent = text;
   }
