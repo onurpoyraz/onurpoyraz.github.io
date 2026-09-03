@@ -80,7 +80,18 @@ Edit `<section id="experience">`. Each job is one `<li class="timeline-item">` b
 </div>
 ```
 
-The `work-cite` link is optional and only belongs on work that became a paper. Its `href` is `#pub-` plus the **BibTeX key** of the entry in the Publications block below; clicking it clears any active publication filter, scrolls to that entry, and flashes it. Rename a BibTeX key and these links break silently, so grep for the old key before you do.
+The `work-cite` link is optional and only belongs on work that became something citable. It comes in two forms, and the arrow in front of it is what tells them apart:
+
+- **A paper on this page** — `href="#pub-<bibtex key>"`, using the key of the entry in the Publications block below. Rendered with a `↓`. Clicking it clears any active publication filter, scrolls to that entry, and flashes it. Rename a BibTeX key and these links break silently, so grep for the old key before you do.
+- **Something off-site** — add `class="work-cite is-external"` plus `target="_blank" rel="noopener"` and link straight out. Rendered with a `↗`. This is what the two advised M.Sc. theses under Aalto–Nokia use. Put the full title, venue and year in the `title` attribute; the visible label stays short.
+
+```html
+<a class="work-cite is-external" href="https://aaltodoc.aalto.fi/items/…"
+   target="_blank" rel="noopener"
+   title="Firstname Lastname, “Full title” — M.Sc. thesis, Aalto University, 2025.">F. Lastname, M.Sc. ’25</a>
+```
+
+A role can also carry one `<p class="timeline-lede">` between the org line and the grid, for something true of the job that no single card can hold — Aalto–Nokia uses it to say he led that side and advised the theses. Keep it to one sentence and to one or two roles; the cards exist because this section had too much prose.
 
 This is where the page's Projects section went. It described the same six pieces of work the Experience bullets described and the Publications list described a third time; the cards keep the part that was worth keeping — the keywords — and the citation replaces the third telling with a link.
 
@@ -91,11 +102,11 @@ Above the cards sits an **overlap map** — a shared time axis, one lane per ent
     id="exp-something"        <!-- anchor the chart bar links to; must be unique -->
     data-start="2025-03"      <!-- YYYY-MM, inclusive -->
     data-end="2025-11"        <!-- YYYY-MM, inclusive; OMIT ENTIRELY if ongoing -->
-    data-kind="role"          <!-- degree | role — picks the bar colour -->
+    data-kind="industry"      <!-- research | industry — picks the bar colour -->
     data-short="Some Org">    <!-- short lane label; falls back to the org line -->
 ```
 
-`data-kind="degree"` (mint) is a period of study, `data-kind="role"` (cobalt) is a position. Lanes are ordered by when they ended, longest first on a tie, which is what lands each degree directly above the work done inside it.
+`data-kind="research"` (mint) is the two degrees; `data-kind="industry"` (cobalt) is every paid position and university–industry engagement. Lanes are ordered by when they ended, longest first on a tie, which is what lands each degree directly above the work done inside it.
 
 A role with no `data-end` is drawn as ongoing: its bar runs to today and fades out rather than stopping, and "today" is computed at page load, so nothing needs updating as time passes. A card without `data-start` is simply left out of the chart. The chart hides itself if the script does not run.
 

@@ -20,10 +20,11 @@
    its bar underneath them they read as three unrelated jobs. It is the
    one Education entry carrying the attributes.
 
-   Two kinds, two colours: a 'degree' is a period of study, a 'role' is
-   a position. Lanes are ordered by when they ended, then longest first,
-   which is what puts each degree directly above the work done inside
-   it — the containment the chart exists to show.
+   Two kinds, two colours: 'research' is the two degrees, 'industry' is
+   every paid position and university-industry engagement. Lanes are
+   ordered by when they ended, then longest first, which is what puts
+   each degree directly above the work done inside it — the containment
+   the chart exists to show.
    ============================================================ */
 
 (function experienceChart() {
@@ -50,7 +51,7 @@
     const ongoing = !el.dataset.end;
     return {
       id: el.id,
-      kind: el.dataset.kind === 'degree' ? 'degree' : 'role',
+      kind: el.dataset.kind === 'industry' ? 'industry' : 'research',
       text: el.dataset.short || el.querySelector('.timeline-org').textContent.trim(),
       role: el.querySelector('.timeline-role').textContent.trim(),
       when: el.querySelector('.timeline-date').textContent.trim(),
@@ -125,8 +126,8 @@
   }
 
   const legend = el('figcaption', 'exp-legend', mount);
-  for (const [cls, text] of [['lg-degree', 'degree'],
-                             ['lg-role', 'role'],
+  for (const [cls, text] of [['lg-research', 'research'],
+                             ['lg-industry', 'industry'],
                              ['lg-now', 'today']]) {
     el('span', cls, legend).textContent = text;
   }

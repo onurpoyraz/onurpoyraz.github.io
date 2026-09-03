@@ -203,7 +203,7 @@
 
       <ol class="timeline">
 
-        <li class="timeline-item reveal" id="exp-vaalia" data-start="2025-03" data-kind="role" data-short="Vaalia Health">
+        <li class="timeline-item reveal" id="exp-vaalia" data-start="2025-03" data-kind="industry" data-short="Vaalia Health">
           <div class="timeline-meta">
             <span class="timeline-date">Mar 2025 – Present</span>
             <span class="timeline-loc">Espoo, Finland</span>
@@ -251,7 +251,7 @@
           </div>
         </li>
 
-        <li class="timeline-item reveal" id="exp-nokia" data-start="2024-07" data-end="2024-12" data-kind="role" data-short="Aalto–Nokia">
+        <li class="timeline-item reveal" id="exp-nokia" data-start="2024-07" data-end="2024-12" data-kind="industry" data-short="Aalto–Nokia">
           <div class="timeline-meta">
             <span class="timeline-date">Jul 2024 – Dec 2024</span>
             <span class="timeline-loc">Espoo, Finland</span>
@@ -259,26 +259,42 @@
           <h3 class="timeline-role">Lead Researcher, Aalto–Nokia Collaboration</h3>
           <p class="timeline-org">Aalto University &amp; Nokia</p>
 
+          <!-- The one role with a line of prose above its cards. What
+               makes it what it is — leading the Aalto side, and two
+               people being brought through a thesis on it — is a fact
+               about the job, not about either piece of work, so no
+               card can hold it. -->
+          <p class="timeline-lede">Led Aalto's side of the collaboration on hardware-aware combinatorial optimization for emerging 6G systems — setting the research direction, and advising the two M.Sc. theses the project produced.</p>
+
           <div class="work-grid">
+            <!-- Both cards cite a thesis rather than a paper: an
+                 outward arrow and a new tab, where a paper citation
+                 gets a downward one and a jump to Publications. -->
             <article class="work-card">
-              <h4>Hardware-aware combinatorial optimization</h4>
-              <p>Led Aalto's workstream for emerging 6G systems, analyzing quantum annealing and Ising machines running on memristor-based hardware.</p>
+              <h4>Resistor-based Ising machine for MU-MIMO</h4>
+              <p>Two hardware configurations of a programmable resistor-based Ising machine, simulated under component non-idealities and set against the LMMSE detector on uplink multi-user MIMO — the machine outperformed it.</p>
               <div class="work-foot">
-                <div class="work-tags"><span>Combinatorial optimization</span><span>Quantum annealing</span><span>6G</span></div>
+                <div class="work-tags"><span>Ising machines</span><span>MIMO detection</span><span>Analog hardware</span></div>
+                <a class="work-cite is-external" href="https://aaltodoc.aalto.fi/items/75224d58-58bc-4d53-8b6f-280ae2f9122e"
+                   target="_blank" rel="noopener"
+                   title="Jouni Tammenmaa, “Application of resistor-based Ising machines in solving uplink multi-user Multiple-input Multiple-output problems” — M.Sc. thesis, Aalto University, 2025. Advised by Onur Poyraz.">J. Tammenmaa, M.Sc. ’25</a>
               </div>
             </article>
 
             <article class="work-card">
-              <h4>Analog–digital Ising machine</h4>
-              <p>A hybrid Ising machine for multi-user MIMO detection, translating memristor hardware constraints into algorithm design.</p>
+              <h4>Programmable-conductor QUBO solver</h4>
+              <p>An architecture that maps combinatorial problems onto programmable conductors and survives analog non-idealities, benchmarked against brute force on the travelling salesman problem — then turned on neural-network training, where one layer matched backpropagation.</p>
               <div class="work-foot">
-                <div class="work-tags"><span>Ising machines</span><span>MIMO detection</span><span>Memristors</span></div>
+                <div class="work-tags"><span>QUBO</span><span>Combinatorial optimization</span><span>Analog hardware</span></div>
+                <a class="work-cite is-external" href="https://aaltodoc.aalto.fi/items/e471758d-1b78-425f-9d1e-4f21d16ec572"
+                   target="_blank" rel="noopener"
+                   title="Linh Nguyen, “Simulation of a programmable conductor-based QUBO solver and its application” — M.Sc. thesis, Aalto University, 2025. Advised by Onur Poyraz.">L. Nguyen, M.Sc. ’25</a>
               </div>
             </article>
           </div>
         </li>
 
-        <li class="timeline-item reveal" id="exp-phd" data-start="2019-08" data-end="2024-12" data-kind="degree" data-short="Aalto Ph.D.">
+        <li class="timeline-item reveal" id="exp-phd" data-start="2019-08" data-end="2024-12" data-kind="research" data-short="Aalto Ph.D.">
           <div class="timeline-meta">
             <span class="timeline-date">Aug 2019 – Dec 2024</span>
             <span class="timeline-loc">Espoo, Finland</span>
@@ -325,7 +341,7 @@
           </div>
         </li>
 
-        <li class="timeline-item reveal" id="exp-bkm" data-start="2018-06" data-end="2019-06" data-kind="role" data-short="BKM">
+        <li class="timeline-item reveal" id="exp-bkm" data-start="2018-06" data-end="2019-06" data-kind="industry" data-short="BKM">
           <div class="timeline-meta">
             <span class="timeline-date">Jun 2018 – Jun 2019</span>
             <span class="timeline-loc">İstanbul, Turkey</span>
@@ -345,7 +361,7 @@
           </div>
         </li>
 
-        <li class="timeline-item reveal" id="exp-deepc" data-start="2018-06" data-end="2018-12" data-kind="role" data-short="DeepC">
+        <li class="timeline-item reveal" id="exp-deepc" data-start="2018-06" data-end="2018-12" data-kind="industry" data-short="DeepC">
           <div class="timeline-meta">
             <span class="timeline-date">Jun 2018 – Dec 2018</span>
             <span class="timeline-loc">İstanbul, Turkey</span>
@@ -364,7 +380,7 @@
           </div>
         </li>
 
-        <li class="timeline-item reveal" id="exp-borusan" data-start="2017-02" data-end="2018-04" data-kind="role" data-short="Borusan R&amp;D">
+        <li class="timeline-item reveal" id="exp-borusan" data-start="2017-02" data-end="2018-04" data-kind="industry" data-short="Borusan R&amp;D">
           <div class="timeline-meta">
             <span class="timeline-date">Feb 2017 – Apr 2018</span>
             <span class="timeline-loc">İstanbul, Turkey</span>
@@ -409,7 +425,7 @@
              comes from the Ph.D. Researcher card up in Experience,
              which is where that work is actually described. -->
         <li class="timeline-item reveal" id="edu-msc"
-            data-start="2017-01" data-end="2019-06" data-kind="degree" data-short="Boğaziçi M.Sc.">
+            data-start="2017-01" data-end="2019-06" data-kind="research" data-short="Boğaziçi M.Sc.">
           <div class="timeline-meta">
             <span class="timeline-date">Jan 2017 – Jun 2019</span>
           </div>

@@ -577,6 +577,17 @@ ul, ol { list-style: none; }
 .timeline-org { color: var(--text-muted); font-size: 0.92rem; margin-bottom: 0.9rem; }
 .timeline-desc { color: var(--text-muted); font-size: 0.95rem; }
 
+/* A line of framing above the work cards, for the one role whose shape
+   — leading a side of a collaboration, advising the theses that came
+   out of it — is a fact about the job rather than about any single
+   piece of work, so no card can hold it. Rare on purpose: the cards
+   exist because this section had too much prose. */
+.timeline-lede {
+  color: var(--text-muted);
+  font-size: 0.92rem;
+  margin: -0.35rem 0 0.95rem;
+}
+
 .timeline-bullets { display: flex; flex-direction: column; gap: 0.45rem; }
 .timeline-bullets li {
   position: relative;
@@ -680,8 +691,13 @@ ul, ol { list-style: none; }
   border-bottom: 1px solid transparent;
   transition: color var(--t-fast), border-color var(--t-fast);
 }
-.work-cite::before { content: '↓ '; opacity: 0.65; }
 .work-cite:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* The arrow says where the link goes, and it is the only thing that
+   does: down the page to the Publications entry, or out to a thesis in
+   Aalto's repository. Same weight either way — both are footnotes. */
+.work-cite::before { content: '↓ '; opacity: 0.65; }
+.work-cite.is-external::before { content: '↗ '; }
 
 /* ---------- Overlap map ----------
    The cards below read as a sequence; several of those roles actually
@@ -791,8 +807,8 @@ ul, ol { list-style: none; }
   opacity: var(--exp-ink, 0.6);
   transition: opacity var(--t-fast), filter var(--t-fast);
 }
-.exp-lane[data-kind='degree'] { --exp-tint: var(--c1); }
-.exp-lane[data-kind='role']   { --exp-tint: var(--c2); }
+.exp-lane[data-kind='research'] { --exp-tint: var(--c1); }
+.exp-lane[data-kind='industry'] { --exp-tint: var(--c2); }
 
 /* An ongoing role has no right edge to draw, so it fades out instead
    of stopping — a hard cap would read as an end date. */
@@ -832,8 +848,8 @@ ul, ol { list-style: none; }
   background: var(--lg-tint, var(--accent));
   opacity: 0.7;
 }
-.exp-legend .lg-degree { --lg-tint: var(--c1); }
-.exp-legend .lg-role   { --lg-tint: var(--c2); }
+.exp-legend .lg-research { --lg-tint: var(--c1); }
+.exp-legend .lg-industry { --lg-tint: var(--c2); }
 .exp-legend .lg-now::before {
   width: 2px;
   height: 12px;
