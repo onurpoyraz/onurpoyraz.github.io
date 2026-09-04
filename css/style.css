@@ -9,9 +9,10 @@
      5. Sections              titles + content slabs
      6. Timeline              experience + education
      7. Skills
-     8. Publications
-     9. Contact
-    10. Motion + responsive
+     8. Notes
+     9. Publications
+    10. Contact
+    11. Motion + responsive
    ============================================================ */
 
 /* ============================================================
@@ -577,11 +578,10 @@ ul, ol { list-style: none; }
 .timeline-org { color: var(--text-muted); font-size: 0.92rem; margin-bottom: 0.9rem; }
 .timeline-desc { color: var(--text-muted); font-size: 0.95rem; }
 
-/* A line of framing above the work cards, for the one role whose shape
-   — leading a side of a collaboration, advising the theses that came
-   out of it — is a fact about the job rather than about any single
-   piece of work, so no card can hold it. Rare on purpose: the cards
-   exist because this section had too much prose. */
+/* A line of framing above the work cards for context that belongs to a
+   role rather than any single piece of work: what the company does, or
+   the shape of a collaboration. Rare on purpose; the cards carry the
+   actual work. */
 .timeline-lede {
   color: var(--text-muted);
   font-size: 0.92rem;
@@ -960,7 +960,66 @@ ul, ol { list-style: none; }
 }
 
 /* ============================================================
-   8. PUBLICATIONS
+   8. NOTES
+   ============================================================ */
+.notes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+  gap: 0.75rem;
+}
+
+.note-card {
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  background: var(--slab);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-md);
+  transition: border-color var(--t), background var(--t);
+}
+.note-card:hover { border-color: var(--glass-edge); background: var(--glass-fill); }
+
+.note-kicker {
+  margin-bottom: 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  font-weight: 500;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.note-card h3 {
+  margin-bottom: 0.85rem;
+  font-size: 1.12rem;
+  line-height: 1.3;
+}
+
+.note-card > p:not(.note-kicker) {
+  color: var(--text-muted);
+  font-size: 1rem;
+  line-height: 1.65;
+}
+.note-card > p + p { margin-top: 0.65rem; }
+
+.note-related {
+  align-self: flex-start;
+  margin-top: auto;
+  padding-top: 1.1rem;
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.04em;
+  color: var(--text-subtle);
+  border-bottom: 1px solid transparent;
+  transition: color var(--t-fast), border-color var(--t-fast);
+}
+.note-related::before { content: '↓ '; opacity: 0.65; }
+.note-related:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* ============================================================
+   9. PUBLICATIONS
    ============================================================ */
 .pub-filters { display: flex; gap: 0.5rem; margin-bottom: 1.75rem; flex-wrap: wrap; }
 .pub-filter {
@@ -1056,7 +1115,7 @@ ul, ol { list-style: none; }
 .pub-error { color: var(--text-muted); font-size: 0.95rem; }
 
 /* ============================================================
-   9. CONTACT
+   10. CONTACT
    ============================================================ */
 .contact-body { padding: 2rem; }
 .contact-body > p { color: var(--text-muted); }
@@ -1138,7 +1197,7 @@ ul, ol { list-style: none; }
 }
 
 /* ============================================================
-   10. MOTION + RESPONSIVE
+   11. MOTION + RESPONSIVE
    ============================================================ */
 .reveal {
   opacity: 0;
@@ -1185,7 +1244,7 @@ ul, ol { list-style: none; }
 @media (hover: none) and (pointer: coarse) {
   .theme-toggle { width: 48px; height: 48px; }
   .glass-interactive:hover { transform: none; }
-  .timeline-item:hover, .publication:hover {
+  .timeline-item:hover, .note-card:hover, .publication:hover {
     border-color: var(--hairline);
     background: var(--slab);
   }
