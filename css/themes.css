@@ -93,7 +93,6 @@
   --mesh-c: rgba(239, 78, 155, 0.34);
   --mesh-d: rgba(255, 176, 58, 0.34);
 
-  --canvas-ink: rgba(13, 18, 32, 0.55);
   --exp-ink: 0.8;
 
   /* Both keywords, once, on the bare root: the page supports either and
@@ -149,7 +148,6 @@
   --mesh-c: rgba(239, 78, 155, 0.26);
   --mesh-d: rgba(255, 176, 58, 0.18);
 
-  --canvas-ink: rgba(233, 237, 245, 0.5);
   --exp-ink: 0.58;
   color-scheme: dark;
 }
@@ -192,7 +190,6 @@
     --mesh-c: rgba(239, 78, 155, 0.26);
     --mesh-d: rgba(255, 176, 58, 0.18);
 
-    --canvas-ink: rgba(233, 237, 245, 0.5);
-    --exp-ink: 0.58;
+      --exp-ink: 0.58;
   }
 }

@@ -21,6 +21,15 @@
 const BIB_ELEMENT = 'publications-bib';
 const ME = 'Poyraz, Onur';
 
+/** Everything here is rendered with innerHTML, and the BibTeX block is
+ *  hand-edited. A venue like "Science & Technology" would otherwise be
+ *  read as markup — an ampersand is the one that actually turns up. */
+const esc = (s) => String(s)
+  .replace(/&/g, '&amp;')
+  .replace(/</g, '&lt;')
+  .replace(/>/g, '&gt;')
+  .replace(/"/g, '&quot;');
+
 /** Parse a .bib string into an array of entry objects. */
 function parseBibtex(src) {
   const entries = [];
@@ -64,7 +73,7 @@ function formatAuthors(authors) {
     } else {
       display = a.trim();
     }
-    return isMe ? `<span class="me">${display}</span>` : display;
+    return isMe ? `<span class="me">${esc(display)}</span>` : esc(display);
   }).join(', ');
   return truncated ? `${names} et al.` : names;
 }
@@ -72,7 +81,7 @@ function formatAuthors(authors) {
 /** Build a link button if a URL/DOI is present. */
 function linkButton(label, href) {
   if (!href) return '';
-  return `<a class="pub-link glass-interactive" href="${href}" target="_blank" rel="noopener">${label}</a>`;
+  return `<a class="pub-link glass-interactive" href="${esc(href)}" target="_blank" rel="noopener">${label}</a>`;
 }
 
 /** Format a venue string from entry fields. */
@@ -106,8 +115,6 @@ function renderPublications(entries) {
   const container = document.getElementById('publications-list');
   if (!container) return;
 
-  entries.sort((a, b) => (b.fields.year || 0) - (a.fields.year || 0));
-
   const byYear = {};
   for (const e of entries) {
     const y = e.fields.year || 'Unknown';
@@ -120,19 +127,23 @@ function renderPublications(entries) {
     <div class="pub-year-group">
       <div class="pub-year">${year}</div>
       ${byYear[year].map(e => {
-        const doi = e.fields.doi ? `https://doi.org/${e.fields.doi}` : null;
-        const url = e.fields.url || doi;
+        // Most entries carry the DOI twice, as `doi` and as a doi.org
+        // `url`. Rendering both gave two buttons, labelled differently,
+        // pointing at the same page — so Link only appears when it
+        // actually goes somewhere the DOI button does not.
+        const doiUrl = e.fields.doi ? `https://doi.org/${e.fields.doi}` : null;
+        const url = e.fields.url && e.fields.url !== doiUrl ? e.fields.url : null;
         return `
           <article class="publication" id="pub-${e.key}" data-type="${e.type}">
-            <h3 class="pub-title">${e.fields.title || ''}</h3>
+            <h3 class="pub-title">${esc(e.fields.title || '')}</h3>
             <p class="pub-authors">${formatAuthors(e.fields.author)}</p>
-            <p class="pub-venue">${formatVenue(e)}</p>
+            <p class="pub-venue">${esc(formatVenue(e))}</p>
             <div class="pub-links">
               ${linkButton('Link', url)}
-              ${e.fields.doi ? linkButton('DOI', `https://doi.org/${e.fields.doi}`) : ''}
+              ${linkButton('DOI', doiUrl)}
               <button class="pub-link glass-interactive" data-bibtex-toggle>BibTeX</button>
             </div>
-            <pre class="pub-bibtex">${bibtexBlock(e)}</pre>
+            <pre class="pub-bibtex">${esc(bibtexBlock(e))}</pre>
           </article>
         `;
       }).join('')}
@@ -155,6 +166,14 @@ function renderPublications(entries) {
       const filter = btn.dataset.filter;
       container.querySelectorAll('.publication').forEach(pub => {
         pub.style.display = (filter === 'all' || pub.dataset.type === filter) ? '' : 'none';
+      });
+      // A year the filter empties has to go with its entries. Most
+      // years here hold a single paper, so filtering used to leave a
+      // column of bare year headings with nothing under them.
+      container.querySelectorAll('.pub-year-group').forEach(group => {
+        const kept = [...group.querySelectorAll('.publication')]
+          .some(pub => filter === 'all' || pub.dataset.type === filter);
+        group.style.display = kept ? '' : 'none';
       });
     });
   });

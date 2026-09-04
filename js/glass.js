@@ -29,9 +29,16 @@
     let pending = false;
     let px = 0, py = 0;
 
+    // Queried once, on the first frame that needs it. Nothing on the
+    // page mints new .glass after load — the Experience chart and the
+    // publication list both build plain elements — and this runs on
+    // every pointer frame, ahead of a getBoundingClientRect per hit.
+    let glass = null;
+
     function paint() {
       pending = false;
-      for (const el of document.querySelectorAll('.glass')) {
+      if (!glass) glass = document.querySelectorAll('.glass');
+      for (const el of glass) {
         const r = el.getBoundingClientRect();
         // Skip anything off screen — no point costing a layout read.
         if (r.bottom < -200 || r.top > window.innerHeight + 200) continue;
@@ -317,7 +324,7 @@
     }
 
     function start() {
-      if (raf || reduced.matches) return;
+      if (raf || reduced.matches || !onScreen || document.hidden) return;
       raf = requestAnimationFrame(tick);
     }
     function stop() {
@@ -325,11 +332,17 @@
       raf = null;
     }
 
-    // Only animate while the hero is actually on screen.
+    // Only animate while the hero is actually on screen. The flag is
+    // what start() checks, because the other two callers below know
+    // nothing about scroll position: coming back to the tab, or
+    // switching reduced-motion off, used to restart the animation and
+    // leave it running against a hero scrolled far out of view.
+    let onScreen = true;
     const hero = canvas.closest('section');
     if (hero && 'IntersectionObserver' in window) {
       new IntersectionObserver((entries) => {
-        entries[0].isIntersecting ? start() : stop();
+        onScreen = entries[0].isIntersecting;
+        onScreen ? start() : stop();
       }, { threshold: 0 }).observe(hero);
     } else {
       start();
