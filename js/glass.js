@@ -310,21 +310,27 @@
       ctx.globalAlpha = 1;
     }
 
+    // Set once a frame has thrown (a bad colour token used to do it in
+    // WebKit). The page keeps the last good frame on screen; what this
+    // prevents is the retry, since every start() caller below would
+    // otherwise throw one more frame on each tab switch and scroll.
+    let broken = false;
+
     function tick() {
       t += 0.006;
-      // One throwing frame must not take the whole animation down with it
-      // (a bad colour token used to kill the canvas outright in WebKit).
       try {
         draw();
       } catch (e) {
+        broken = true;
         stop();
+        console.warn('hero canvas stopped after a draw error', e);
         return;
       }
       raf = requestAnimationFrame(tick);
     }
 
     function start() {
-      if (raf || reduced.matches || !onScreen || document.hidden) return;
+      if (raf || broken || reduced.matches || !onScreen || document.hidden) return;
       raf = requestAnimationFrame(tick);
     }
     function stop() {

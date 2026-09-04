@@ -48,12 +48,29 @@
   if (!items.length) return;
 
   /* Time is measured in fractional years, which is all the precision a
-     bar a few pixels wide can carry. "2019-08" is the first instant of
-     that month; an end month is inclusive, so it runs to the first
-     instant of the next one. */
+     bar a few pixels wide can carry. `at` is the first instant of the
+     period named: "2019-08" is the start of that month, a bare "2019"
+     the start of that year. `after` is the first instant past it, which
+     is what makes an end date inclusive — "2019-06" runs to the start
+     of July, "2019" to the start of 2020. Both shapes are accepted
+     because the month is the finer of the two, not the required one. */
+  /* Validated by shape rather than by whether the arithmetic happens to
+     produce a number: "2019-xx" and an empty attribute both divide out
+     to something finite, and a silently misplaced bar is worse than a
+     missing one. Anything that is not YYYY or YYYY-MM is NaN here, and
+     the filter below reports it. A one-digit month is allowed through —
+     rejecting "2019-5" would be pedantry, not a caught mistake. */
+  const parse = (ym) => {
+    const m = /^(\d{4})(?:-(0?[1-9]|1[0-2]))?$/.exec(String(ym).trim());
+    return m ? { year: +m[1], month: m[2] ? +m[2] : null } : null;
+  };
   const at = (ym) => {
-    const [y, m] = ym.split('-').map(Number);
-    return y + (m - 1) / 12;
+    const p = parse(ym);
+    return p ? p.year + (p.month ? (p.month - 1) / 12 : 0) : NaN;
+  };
+  const after = (ym) => {
+    const p = parse(ym);
+    return p ? at(ym) + (p.month ? 1 / 12 : 1) : NaN;
   };
   const today = (() => {
     const d = new Date();
@@ -72,7 +89,7 @@
     return '';
   };
 
-  const rows = items.map((el) => {
+  const dated = items.map((el) => {
     const ongoing = !el.dataset.end;
     const kind = el.closest('[data-kind]')?.dataset.kind;
     const role = pick(el, '.timeline-role', 'h4');
@@ -83,10 +100,20 @@
       role,
       when: pick(el, '.timeline-date', '.work-when'),
       start: at(el.dataset.start),
-      end: ongoing ? today : at(el.dataset.end) + 1 / 12,
+      end: ongoing ? today : after(el.dataset.end),
       ongoing
     };
   });
+
+  /* A typo in a date would otherwise place a bar at NaN%, which the
+     browser drops silently — the lane renders as an empty row and the
+     role just looks missing. Say so instead. */
+  const rows = dated.filter((r) => {
+    const ok = Number.isFinite(r.start) && Number.isFinite(r.end);
+    if (!ok) console.warn(`experience chart: unparseable date on #${r.id}, lane skipped`);
+    return ok;
+  });
+  if (!rows.length) return;
 
   /* Latest finish first, and on a tie the longer bar first. Document
      order would do for Experience alone, but the M.Sc. arrives from a
