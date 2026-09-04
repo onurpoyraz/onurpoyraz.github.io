@@ -14,17 +14,50 @@
 
   /* ---------- Theme ---------- */
   const toggleBtn = document.getElementById('theme-toggle');
+  const osDark = window.matchMedia('(prefers-color-scheme: dark)');
+
   function currentTheme() {
-    return root.getAttribute('data-theme')
-      || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    return root.getAttribute('data-theme') || (osDark.matches ? 'dark' : 'light');
   }
+
+  /** Everything the browser draws for us rather than we for it: the
+   *  chrome tint, and the scheme Safari uses for its own page-modal
+   *  dialogs — the download permission prompt the CV buttons trigger,
+   *  alert(), confirm().
+   *
+   *  Both are declared in the <head> against `prefers-color-scheme`,
+   *  which is right until the toggle disagrees with the OS. From then
+   *  on the OS is the wrong thing to key off, so: the ground colour
+   *  actually in use goes into every theme-color tag, so whichever the
+   *  browser reads gives the same answer; and the scheme goes inline on
+   *  the root element, where Safari looks for it and where it outranks
+   *  themes.css. The tint is read from the computed style rather than a
+   *  hardcoded pair so it can never drift out of step with the palette. */
+  const themeColorMetas = document.querySelectorAll('meta[name="theme-color"]');
+  function syncBrowserChrome() {
+    const ground = getComputedStyle(root).getPropertyValue('--ground').trim();
+    if (ground) themeColorMetas.forEach(m => m.setAttribute('content', ground));
+    root.style.colorScheme = currentTheme();
+  }
+  syncBrowserChrome();
+
   if (toggleBtn) {
     toggleBtn.addEventListener('click', () => {
       const next = currentTheme() === 'dark' ? 'light' : 'dark';
       root.setAttribute('data-theme', next);
-      localStorage.setItem('theme', next);
+      syncBrowserChrome();
+      // Safari with cookies blocked throws here instead of failing
+      // quietly. The theme has already been applied above, so losing
+      // the write only costs the memory of it.
+      try { localStorage.setItem('theme', next); } catch (e) { /* storage blocked */ }
     });
   }
+
+  // Following the OS means following it while the page is open too.
+  // Only when nothing overrides it, though — an explicit choice stands.
+  osDark.addEventListener('change', () => {
+    if (!root.hasAttribute('data-theme')) syncBrowserChrome();
+  });
 
   /* ---------- Reveal on scroll ---------- */
   const io = new IntersectionObserver((entries) => {

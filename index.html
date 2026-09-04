@@ -6,6 +6,20 @@
   <title>Onur Poyraz — Senior Data Scientist, Probabilistic Machine Learning</title>
   <meta name="description" content="Personal webpage of Onur Poyraz, PhD — Senior Data Scientist working on probabilistic machine learning, causal inference, and forecasting for longitudinal healthcare data." />
 
+  <!-- Both schemes, declared to the browser before a line of CSS has
+       parsed. themes.css says `color-scheme` too, but only from the
+       moment the stylesheet lands — and Safari has already decided by
+       then how to draw the surfaces it owns itself: the initial canvas,
+       scrollbars, form controls, and the page-modal dialogs (the
+       download permission prompt the CV buttons trigger, alert(),
+       confirm()). Without this they come up white on a dark page. -->
+  <meta name="color-scheme" content="light dark" />
+
+  <!-- Browser chrome tint. JS keeps these in step with the toggle, so
+       the media attributes only matter for the first paint. -->
+  <meta name="theme-color" content="#e9edf5" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#0b101c" media="(prefers-color-scheme: dark)" />
+
   <!-- One address for this page. The site answers on a few URL shapes
        (with and without /index.html, with tracking parameters bolted on
        by whoever shared it); this names the real one so search engines
@@ -93,8 +107,17 @@
   <!-- Prevent theme flash: apply saved theme before paint. -->
   <script>
     (function () {
-      const saved = localStorage.getItem('theme');
-      if (saved) document.documentElement.setAttribute('data-theme', saved);
+      let saved = null;
+      try { saved = localStorage.getItem('theme'); } catch (e) { /* storage blocked */ }
+      if (!saved) return;
+      const root = document.documentElement;
+      root.setAttribute('data-theme', saved);
+      // A stored theme can disagree with the OS, and the meta above
+      // only knows the OS. Safari reads the scheme off the root element
+      // when it draws its own dialogs, so put it there directly —
+      // inline, so it outranks themes.css, and here, so it is set
+      // before the first paint.
+      root.style.colorScheme = saved;
     })();
   </script>
 </head>
@@ -613,9 +636,9 @@
 
   </main>
 
-  <script src="js/glass.js?v=3"></script>
+  <script src="js/glass.js?v=4"></script>
   <script src="js/experience.js?v=2"></script>
   <script src="js/publications.js?v=5"></script>
-  <script src="js/main.js?v=3"></script>
+  <script src="js/main.js?v=4"></script>
 </body>
 </html>

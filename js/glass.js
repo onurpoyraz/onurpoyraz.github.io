@@ -341,12 +341,20 @@
 
     reduced.addEventListener('change', () => (reduced.matches ? stop() : start()));
 
-    // Re-read the palette whenever the theme attribute flips.
-    new MutationObserver(() => {
+    // Re-read the palette whenever the theme changes under us. Two
+    // ways it can: the toggle sets the attribute, or — with no
+    // attribute set at all — the OS preference flips while the page is
+    // open, which no mutation reports.
+    function repaint() {
       pal = palette();
       makeBand();
       draw();
-    }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+    }
+    new MutationObserver(repaint)
+      .observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+      if (!document.documentElement.hasAttribute('data-theme')) repaint();
+    });
 
     let rt;
     function scheduleResize() {
