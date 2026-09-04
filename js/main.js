@@ -27,17 +27,22 @@
    *
    *  Both are declared in the <head> against `prefers-color-scheme`,
    *  which is right until the toggle disagrees with the OS. From then
-   *  on the OS is the wrong thing to key off, so: the ground colour
-   *  actually in use goes into every theme-color tag, so whichever the
-   *  browser reads gives the same answer; and the scheme goes inline on
-   *  the root element, where Safari looks for it and where it outranks
-   *  themes.css. The tint is read from the computed style rather than a
-   *  hardcoded pair so it can never drift out of step with the palette. */
+   *  on the OS is the wrong thing to key off, so the ground colour
+   *  actually in use goes into every theme-color tag — whichever the
+   *  browser reads then gives the same answer. It is read from the
+   *  computed style rather than a hardcoded pair so it can never drift
+   *  out of step with the palette.
+   *
+   *  The scheme is only pinned inline when the toggle has actually
+   *  overridden the OS. With no override the empty string hands it back
+   *  to themes.css, which says `light dark` and lets the browser
+   *  resolve it — pinning one keyword there is what made Safari treat
+   *  the page as single-scheme. */
   const themeColorMetas = document.querySelectorAll('meta[name="theme-color"]');
   function syncBrowserChrome() {
     const ground = getComputedStyle(root).getPropertyValue('--ground').trim();
     if (ground) themeColorMetas.forEach(m => m.setAttribute('content', ground));
-    root.style.colorScheme = currentTheme();
+    root.style.colorScheme = root.getAttribute('data-theme') || '';
   }
   syncBrowserChrome();
 

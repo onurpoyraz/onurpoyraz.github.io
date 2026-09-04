@@ -95,8 +95,20 @@
 
   --canvas-ink: rgba(13, 18, 32, 0.55);
   --exp-ink: 0.8;
-  color-scheme: light;
+
+  /* Both keywords, once, on the bare root: the page supports either and
+     the browser resolves it. The palette below still switches on a media
+     query, but `color-scheme` must not — a single keyword picked by a
+     query reads to WebKit as "this page is light-only" / "dark-only",
+     and Safari drew its own download-permission dialog light off the
+     back of that even with the dark palette on screen. Only an explicit
+     choice from the toggle narrows it, just below. */
+  color-scheme: light dark;
 }
+
+/* The toggle disagreeing with the OS is the one case where the browser
+   cannot resolve this itself. */
+[data-theme='light'] { color-scheme: light; }
 
 /* ============================================================
    DARK — "night": glass reads as a lit film over deep ground
@@ -182,6 +194,5 @@
 
     --canvas-ink: rgba(233, 237, 245, 0.5);
     --exp-ink: 0.58;
-    color-scheme: dark;
   }
 }
