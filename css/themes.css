@@ -61,6 +61,15 @@
   --accent-hover: #047a67;
   --accent-soft: rgba(6, 151, 127, 0.13);
 
+  /* The second accent, for the parts of the page keyed to a category
+     rather than to the site: --accent is what mint (--c1) looks like
+     once it is dark enough to read as text on a slab, and this is the
+     same treatment of cobalt (--c2). The raw components stay for
+     graphics — a bar or a legend swatch is not read, so it can be as
+     light as the palette says. */
+  --accent-alt: #2f6be0;
+  --accent-alt-soft: rgba(47, 107, 224, 0.13);
+
   /* Glass material */
   /* Fill stays low so the backdrop's colour survives the blur — a heavy
      fill is what turns glass into frosted plastic. */
@@ -124,6 +133,12 @@
   --accent-hover: #6ef2d6;
   --accent-soft: rgba(46, 230, 192, 0.15);
 
+  /* Lifted off --c2 rather than used raw: the bar colour that
+     reads well as an 11px capsule is too dim for 0.68rem mono
+     on the dark slab. */
+  --accent-alt: #7aa5ff;
+  --accent-alt-soft: rgba(122, 165, 255, 0.15);
+
   --glass-fill: rgba(255, 255, 255, 0.05);
   --glass-fill-strong: rgba(255, 255, 255, 0.1);
   --glass-rim: rgba(255, 255, 255, 0.4);
@@ -165,6 +180,12 @@
     --accent: #2ee6c0;
     --accent-hover: #6ef2d6;
     --accent-soft: rgba(46, 230, 192, 0.15);
+
+    /* Lifted off --c2 rather than used raw: the bar colour that
+       reads well as an 11px capsule is too dim for 0.68rem mono
+       on the dark slab. */
+    --accent-alt: #7aa5ff;
+    --accent-alt-soft: rgba(122, 165, 255, 0.15);
 
     --glass-fill: rgba(255, 255, 255, 0.05);
     --glass-fill-strong: rgba(255, 255, 255, 0.1);

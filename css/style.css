@@ -535,7 +535,17 @@ ul, ol { list-style: none; }
   gap: 0.75rem;
 }
 
+/* Every accent inside a timeline item resolves through --item-accent,
+   which the item's data-kind sets — the same two-colour split the
+   overlap map above draws its bars with, so a blue bar leads down to a
+   blue-keyed card and a mint bar to a mint one. The attribute is the
+   chart's, not this rule's: it is read by js/experience.js, and styling
+   off it is what keeps the two halves of the section from drifting.
+   Entries with no kind (the degrees in Education) keep the site accent,
+   which is what 'research' resolves to anyway. */
 .timeline-item {
+  --item-accent: var(--accent);
+  --item-accent-soft: var(--accent-soft);
   position: relative;
   background: var(--slab);
   -webkit-backdrop-filter: blur(20px);
@@ -545,6 +555,11 @@ ul, ol { list-style: none; }
   padding: 1.5rem 1.5rem 1.5rem 2.25rem;
   transition: border-color var(--t), background var(--t);
 }
+.timeline-item[data-kind='industry'] {
+  --item-accent: var(--accent-alt);
+  --item-accent-soft: var(--accent-alt-soft);
+}
+
 .timeline-item::before {
   content: '';
   position: absolute;
@@ -553,7 +568,7 @@ ul, ol { list-style: none; }
   bottom: 1.9rem;
   width: 2px;
   border-radius: 2px;
-  background: linear-gradient(var(--accent), transparent);
+  background: linear-gradient(var(--item-accent, var(--accent)), transparent);
   opacity: 0.45;
   transition: opacity var(--t);
 }
@@ -572,7 +587,7 @@ ul, ol { list-style: none; }
   text-transform: uppercase;
   color: var(--text-subtle);
 }
-.timeline-date { color: var(--accent); }
+.timeline-date { color: var(--item-accent, var(--accent)); }
 
 .timeline-role { font-size: 1.15rem; margin-bottom: 0.2rem; }
 .timeline-org { color: var(--text-muted); font-size: 0.92rem; margin-bottom: 0.9rem; }
@@ -603,7 +618,7 @@ ul, ol { list-style: none; }
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: var(--accent);
+  background: var(--item-accent, var(--accent));
   opacity: 0.6;
 }
 
@@ -689,8 +704,8 @@ ul, ol { list-style: none; }
   white-space: nowrap;
   padding: 0.2rem 0.55rem;
   border-radius: var(--r-capsule);
-  background: var(--accent-soft);
-  color: var(--accent);
+  background: var(--item-accent-soft, var(--accent-soft));
+  color: var(--item-accent, var(--accent));
 }
 
 /* The paper this work became. Quiet on purpose — it is a footnote, not
@@ -706,7 +721,10 @@ ul, ol { list-style: none; }
   border-bottom: 1px solid transparent;
   transition: color var(--t-fast), border-color var(--t-fast);
 }
-.work-cite:hover { color: var(--accent); border-bottom-color: var(--accent); }
+.work-cite:hover {
+  color: var(--item-accent, var(--accent));
+  border-bottom-color: var(--item-accent, var(--accent));
+}
 
 /* The arrow says where the link goes, and it is the only thing that
    does: down the page to the Publications entry, or out to a thesis in

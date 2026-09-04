@@ -104,11 +104,11 @@ Above the cards sits an **overlap map** — a shared time axis, one lane per ent
     id="exp-something"        <!-- anchor the chart bar links to; must be unique -->
     data-start="2025-03"      <!-- YYYY-MM, inclusive -->
     data-end="2025-11"        <!-- YYYY-MM, inclusive; OMIT ENTIRELY if ongoing -->
-    data-kind="industry"      <!-- research | industry — picks the bar colour -->
+    data-kind="industry"      <!-- research | industry — picks the bar and card colour -->
     data-short="Some Org">    <!-- short lane label; falls back to the org line -->
 ```
 
-`data-kind="research"` (mint) is the two degrees; `data-kind="industry"` (cobalt) is every paid position and university–industry engagement. Lanes are ordered by when they ended, longest first on a tie, which is what lands each degree directly above the work done inside it.
+`data-kind="research"` (mint) is the two degrees; `data-kind="industry"` (cobalt) is every paid position and university–industry engagement. The same attribute also tints the card below — its spine, date, keyword chips and citation hover — so a cobalt bar leads down to a cobalt-keyed card. Lanes are ordered by when they ended, longest first on a tie, which is what lands each degree directly above the work done inside it.
 
 **A lane can also come from a single work card**, for a role that held several separate pieces of work. The M.Sc. entry is one position but two engagements with a gap between them, and a single bar across both would paper the gap over — so the attributes go on the `<article class="work-card">` elements instead, which need an `id` of their own to be linked to:
 
@@ -182,15 +182,15 @@ Hero section and Contact section in `index.html` both have link lists. Search fo
 ### Change colors (theme)
 Edit `css/themes.css`. The `:root` block defines light mode; the `[data-theme='dark']` block defines dark mode; a `prefers-color-scheme: dark` block mirrors the dark values so the theme is right before JS runs.
 
-- `--accent` re-tints links, active states, and buttons.
-- `--c1`…`--c4` are the four mixture-component colors. They drive the hero forecast canvas and the ambient mesh, so changing them changes the whole background.
+- `--accent` re-tints links, active states, and buttons. `--accent-alt` does the same for anything keyed to the *industry* half of Experience.
+- `--c1`…`--c4` are the four mixture-component colors. They drive the hero forecast canvas and the ambient mesh, so changing them changes the whole background. `--accent` and `--accent-alt` are the text-safe forms of `--c1` and `--c2`: the raw components are only ever used for graphics, which nobody has to read.
 - The `--glass-*` tokens control the material: fill opacity, rim brightness, blur radius, saturation, and shadow.
 
 ### The glass material
 Add `class="glass"` to any element to make it glass, plus `glass-capsule` for a pill shape and `glass-interactive` for the hover lift. The rule the design follows: **glass is the control layer, content is the ground** — things you click are glass, things you read sit on a plain frosted slab so the text stays crisp.
 
 ### The Experience overlap map
-`js/experience.js` reads the cards and draws the lanes; the styles are the `.exp-*` rules in `css/style.css`. Bar colours come from `--c1` (research) and `--c2` (industry), the dashed "today" marker from `--c4` — the same tokens the hero canvas uses, so re-theming moves both together. `--exp-ink` in `css/themes.css` sets how solid the bars are; the light theme needs more of it than the dark one to hold contrast against a pale slab. Hovering a lane lights its card and vice versa.
+`js/experience.js` reads the cards and draws the lanes; the styles are the `.exp-*` rules in `css/style.css`. Bar colours come from `--c1` (research) and `--c2` (industry), the dashed "today" marker from `--c4` — the same tokens the hero canvas uses, so re-theming moves both together. `--exp-ink` in `css/themes.css` sets how solid the bars are; the light theme needs more of it than the dark one to hold contrast against a pale slab. Hovering a lane lights its card and vice versa — and each card carries its lane's colour, through `--item-accent` on `.timeline-item`, so the pairing holds without the pointer.
 
 ### The hero animation
 `js/glass.js` draws it. `NOW` sets where the forecast boundary sits, `PATHS` how many posterior samples are drawn, and `MAX_DPR` caps the backing-store resolution (the canvas follows `devicePixelRatio` up to that cap, so the strokes stay sharp on retina panels without paying for pixels nobody can see). It pauses when the hero scrolls away, when the tab is hidden, and when the visitor prefers reduced motion.
