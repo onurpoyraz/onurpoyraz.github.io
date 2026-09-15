@@ -1,6 +1,7 @@
 /* ============================================================
    main.js
-   - Theme toggle (persisted in localStorage)
+   - Theme switch: system / light / dark (an override persists
+     in localStorage; system is stored as no key at all)
    - Reveal-on-scroll
    - Scroll-spy: lights the active dot in both the rail and the dock,
      and names the current section in the dock label
@@ -13,11 +14,18 @@
   const root = document.documentElement;
 
   /* ---------- Theme ---------- */
-  const toggleBtn = document.getElementById('theme-toggle');
+  /* Three states, not two: 'system' is the absence of a choice, and is
+     stored as the absence of a key. 'light' and 'dark' are an override
+     and live on the root as data-theme, which is what the palette and
+     the head's pre-paint script both read. */
+  const themeSwitch = document.getElementById('theme-switch');
+  const themeOptions = themeSwitch ? [...themeSwitch.querySelectorAll('.theme-option')] : [];
   const osDark = window.matchMedia('(prefers-color-scheme: dark)');
 
-  function currentTheme() {
-    return root.getAttribute('data-theme') || (osDark.matches ? 'dark' : 'light');
+  function storedTheme() {
+    let saved = null;
+    try { saved = localStorage.getItem('theme'); } catch (e) { /* storage blocked */ }
+    return saved === 'light' || saved === 'dark' ? saved : 'system';
   }
 
   /** Everything the browser draws for us rather than we for it: the
@@ -26,15 +34,15 @@
    *  alert(), confirm().
    *
    *  Both are declared in the <head> against `prefers-color-scheme`,
-   *  which is right until the toggle disagrees with the OS. From then
+   *  which is right until the switch disagrees with the OS. From then
    *  on the OS is the wrong thing to key off, so the ground colour
    *  actually in use goes into every theme-color tag — whichever the
    *  browser reads then gives the same answer. It is read from the
    *  computed style rather than a hardcoded pair so it can never drift
    *  out of step with the palette.
    *
-   *  The scheme is only pinned inline when the toggle has actually
-   *  overridden the OS. With no override the empty string hands it back
+   *  The scheme is only pinned inline when the switch has actually
+   *  overridden the OS. On 'system' the empty string hands it back
    *  to themes.css, which says `light dark` and lets the browser
    *  resolve it — pinning one keyword there is what made Safari treat
    *  the page as single-scheme. */
@@ -44,17 +52,51 @@
     if (ground) themeColorMetas.forEach(m => m.setAttribute('content', ground));
     root.style.colorScheme = root.getAttribute('data-theme') || '';
   }
-  syncBrowserChrome();
 
-  if (toggleBtn) {
-    toggleBtn.addEventListener('click', () => {
-      const next = currentTheme() === 'dark' ? 'light' : 'dark';
-      root.setAttribute('data-theme', next);
-      syncBrowserChrome();
-      // Safari with cookies blocked throws here instead of failing
-      // quietly. The theme has already been applied above, so losing
-      // the write only costs the memory of it.
-      try { localStorage.setItem('theme', next); } catch (e) { /* storage blocked */ }
+  function paintSwitch(choice) {
+    themeOptions.forEach((btn, i) => {
+      const on = btn.dataset.themeValue === choice;
+      btn.setAttribute('aria-checked', String(on));
+      // One tab stop for the group; the arrows move within it.
+      btn.tabIndex = on ? 0 : -1;
+      if (on) themeSwitch.style.setProperty('--sel', i);
+    });
+  }
+
+  function applyTheme(choice, persist) {
+    if (choice === 'system') root.removeAttribute('data-theme');
+    else root.setAttribute('data-theme', choice);
+    syncBrowserChrome();
+    paintSwitch(choice);
+    if (!persist) return;
+    // Safari with cookies blocked throws here instead of failing
+    // quietly. The theme has already been applied above, so losing
+    // the write only costs the memory of it.
+    try {
+      if (choice === 'system') localStorage.removeItem('theme');
+      else localStorage.setItem('theme', choice);
+    } catch (e) { /* storage blocked */ }
+  }
+
+  applyTheme(storedTheme(), false);
+
+  if (themeSwitch) {
+    themeSwitch.addEventListener('click', (e) => {
+      const btn = e.target.closest('.theme-option');
+      if (btn) applyTheme(btn.dataset.themeValue, true);
+    });
+
+    // Radiogroup keyboard contract: arrows move the selection, and the
+    // segment they land on takes the focus with it.
+    themeSwitch.addEventListener('keydown', (e) => {
+      const step = e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1
+        : e.key === 'ArrowLeft' || e.key === 'ArrowUp' ? -1 : 0;
+      if (!step) return;
+      e.preventDefault();
+      const here = themeOptions.findIndex(b => b.getAttribute('aria-checked') === 'true');
+      const next = themeOptions[(here + step + themeOptions.length) % themeOptions.length];
+      applyTheme(next.dataset.themeValue, true);
+      next.focus();
     });
   }
 

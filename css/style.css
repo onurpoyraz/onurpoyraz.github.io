@@ -325,27 +325,69 @@ ul, ol { list-style: none; }
   padding-left: 0.85rem;
 }
 
-/* Theme toggle capsule */
-.theme-toggle {
+/* Theme switch — a three-segment glass control, one segment per state.
+   The selected segment is a thumb that slides between fixed columns
+   rather than a background on the button, so the movement reads as one
+   object changing seats instead of three lights blinking. --sel is the
+   column index, written by main.js. */
+.theme-switch {
   position: fixed;
   top: 1.25rem;
   right: 1.25rem;
   z-index: 60;
-  width: 46px;
-  height: 46px;
+  --sel: 0;
+  --seg: 3.6rem;
+  --pad: 0.3rem;
   display: grid;
-  place-items: center;
-  border: none;
-  color: var(--text);
-  font: inherit;
+  grid-auto-flow: column;
+  grid-auto-columns: var(--seg);
+  padding: var(--pad);
+  border-radius: var(--r-md);
 }
-.theme-toggle svg { position: relative; z-index: 1; }
-.theme-toggle .icon-moon { display: none; }
-[data-theme='dark'] .theme-toggle .icon-sun { display: none; }
-[data-theme='dark'] .theme-toggle .icon-moon { display: block; }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme]) .theme-toggle .icon-sun { display: none; }
-  :root:not([data-theme]) .theme-toggle .icon-moon { display: block; }
+
+.theme-thumb {
+  position: absolute;
+  z-index: 0;
+  top: var(--pad);
+  bottom: var(--pad);
+  left: var(--pad);
+  width: var(--seg);
+  border-radius: calc(var(--r-md) - var(--pad));
+  background: var(--glass-fill-strong);
+  box-shadow:
+    inset 0 1px 0 var(--glass-rim),
+    0 0 0 1px var(--glass-edge),
+    0 2px 8px -4px var(--glass-rim-dim);
+  transform: translateX(calc(var(--sel) * var(--seg)));
+  transition: transform var(--t), background var(--t);
+}
+
+.theme-option {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  justify-items: center;
+  gap: 0.3rem;
+  padding: 0.5rem 0.2rem 0.45rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: var(--text-subtle);
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: color var(--t-fast);
+}
+.theme-option:hover { color: var(--text-muted); }
+.theme-option[aria-checked='true'] { color: var(--text); }
+/* The group is one tab stop; the ring belongs on the segment that holds
+   the focus, and it has to clear the thumb's own rim. */
+.theme-option:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+  border-radius: calc(var(--r-md) - var(--pad));
 }
 
 /* Skip link — first tab stop, hidden until focused. */
@@ -1256,11 +1298,14 @@ ul, ol { list-style: none; }
   .nav-dock a { width: 22px; }
   .nav-dock .dock-label { min-width: 0; padding-left: 0.6rem; font-size: 0.55rem; }
   .pub-bibtex { white-space: pre-wrap; word-break: break-word; font-size: 0.66rem; }
+  .theme-switch { top: 0.85rem; right: 0.85rem; }
 }
 
 /* Touch: no hover lift, larger targets. */
 @media (hover: none) and (pointer: coarse) {
-  .theme-toggle { width: 48px; height: 48px; }
+  /* Bigger seats to aim at, and the labels grow with them. */
+  .theme-switch { --seg: 4rem; }
+  .theme-option { padding: 0.6rem 0.2rem 0.55rem; }
   .glass-interactive:hover { transform: none; }
   .timeline-item:hover, .note-card:hover, .publication:hover {
     border-color: var(--hairline);

@@ -37,7 +37,7 @@ Every push to `main` redeploys automatically.
 ├── js/
 │   ├── glass.js            # Glass specular tracking + the hero forecast canvas
 │   ├── experience.js       # Builds the overlap map from the Experience + M.Sc. cards
-│   ├── main.js             # Theme toggle, scroll-spy, reveal animations
+│   ├── main.js             # Theme switch, scroll-spy, reveal animations
 │   └── publications.js     # Parses the inline BibTeX block, renders the list
 ├── assets/
 │   ├── industry.pdf         # Industry CV — linked from the hero "Industry CV" button
@@ -233,7 +233,7 @@ Modern evergreen browsers (Chrome, Safari, Firefox, Edge). Uses CSS variables, I
 
 - Color contrast meets WCAG AA in both themes.
 - Reduced motion is respected: `@media (prefers-reduced-motion: reduce)` disables reveal animations and smooth scroll.
-- Theme toggle and mobile menu have ARIA labels and `aria-expanded` states.
+- The theme switch is a labelled `radiogroup` with arrow-key selection; the nav rails carry ARIA labels.
 
 ## License
 
